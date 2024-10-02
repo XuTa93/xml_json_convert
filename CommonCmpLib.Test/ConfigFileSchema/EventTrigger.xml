@@ -1,0 +1,11 @@
+﻿<ns1:eventtriggers xmlns:ns1="urn:ConfigFileSchema">
+    <eventtrigger eventid="1" eventname="SampleEvent">
+        <extension>
+            <detectconditions andor="and">
+                <parameter paramid="1" equation=">" value="10" />
+            </detectconditions>
+        </extension>
+    </eventtrigger>
+</ns1:eventtriggers>
+
+

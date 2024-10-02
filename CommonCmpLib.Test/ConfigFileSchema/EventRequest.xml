@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ns1:eventrequests xmlns:ns1="urn:ConfigFileSchema">
+	<eventrequest eventid="" eventname="">
+		<parameters>
+			<parameter paramid="" />
+			<parameter paramid="" />
+		</parameters>
+	</eventrequest>
+</ns1:eventrequests>

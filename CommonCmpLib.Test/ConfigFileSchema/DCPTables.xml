@@ -1,0 +1,33 @@
+﻿<?xml version="1.0"?>
+<DCPTables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:ConfigFileSchema">
+	<DCPTable xmlns="www">
+		<Consumer />
+		<Macname></Macname>
+		<DataCollectionPlan id="" name="" Description="" monitorIntervalInSeconds="">
+			<StartEvent>
+				<EventRequests>
+					<EventRequest eventId="" />
+					<Extension />
+				</EventRequests>
+				<ParameterRequests />
+			</StartEvent>
+			<EndEvent>
+				<EventRequests>
+					<EventRequest eventId="" />
+					<Extension />
+				</EventRequests>
+				<ParameterRequests />
+				<TimeRequests>
+					<TimeRequest />
+				</TimeRequests>
+			</EndEvent>
+			<Contents>
+				<EventRequests />
+				<TraceRequests />
+				<ParameterRequests>
+					<ParameterRequest parameterName="" />
+				</ParameterRequests>
+			</Contents>
+		</DataCollectionPlan>
+	</DCPTable>
+</DCPTables>
