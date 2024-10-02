@@ -21,11 +21,11 @@ namespace CommonCmpLib.JsonToXmlModel
         public string Eventname { get; set; }
 
         [XmlElement(ElementName = "parameter")]
-		public Parameter Parameter { get; set; }
+		public ParameterModel Parameter { get; set; }
 	}
 
     [XmlRoot(ElementName = "parameter")]
-    public class Parameter
+    public class ParameterModel
     {
         [XmlAttribute(AttributeName = "paramid")]
         public string Paramid { get; set; }
