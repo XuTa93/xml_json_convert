@@ -108,13 +108,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonCmpLib.cs" />
-    <Compile Include="CreateTemplate\ParameterServices.cs" />
+    <Compile Include="Model\Parameter\XmlParameterModel.cs" />
+    <Compile Include="Services\ExcelServices\ExcelComonServices.cs" />
+    <Compile Include="Services\ParameterServices.cs" />
     <Compile Include="JsonToXmlModel\EventRequestModel.cs" />
     <Compile Include="JsonToXmlModel\EventTriggerModel.cs" />
-    <Compile Include="Model\ParameterModel.cs" />
+    <Compile Include="Model\Parameter\ExlParameterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\TraceService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="CreateTemplate\" />
     <Folder Include="XmlToJsonModel\" />
   </ItemGroup>
   <ItemGroup>
