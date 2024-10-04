@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CommonCmpLib.Test
+namespace CommonCmpLib_Test
 {
     public partial class TestFull : Form
     {

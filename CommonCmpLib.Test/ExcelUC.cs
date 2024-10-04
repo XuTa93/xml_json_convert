@@ -83,13 +83,13 @@ namespace CommonCmpLib_Test
 
         private void BtnExcelToXml_Click(object sender, EventArgs e)
         {
-            CommonCmpLib.CommonCmpLib.ListParameterToXml();
-            //GetSheetNames();
-            //if (m_lstSheetName == null)
-            //{
-            //    return;
-            //}
-            //ExportParameterSheet(m_strExcel_Path);
+            //CommonCmpLib.CommonCmpLib.ListParameterToXml();
+            GetSheetNames();
+            if (m_lstSheetName == null)
+            {
+                return;
+            }
+            ExportParameterSheet(m_strExcel_Path);
         }
 
         private void btn_CreateTemplate_Click(object sender, EventArgs e)
@@ -115,7 +115,7 @@ namespace CommonCmpLib_Test
             rtxt_SheetNames.Clear();
             foreach (string sheetName in m_lstSheetName)
             {
-                rtxt_SheetNames.Text += sheetName;
+                rtxt_SheetNames.Text += sheetName + Environment.NewLine;
             }
         }
 

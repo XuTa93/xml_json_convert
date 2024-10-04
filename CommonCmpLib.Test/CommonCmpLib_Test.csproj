@@ -52,6 +52,12 @@
     <Compile Include="ExcelUC.Designer.cs">
       <DependentUpon>ExcelUC.cs</DependentUpon>
     </Compile>
+    <Compile Include="JsonXmlConverterUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JsonXmlConverterUC.Designer.cs">
+      <DependentUpon>JsonXmlConverterUC.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestFull.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ExcelUC.resx">
       <DependentUpon>ExcelUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JsonXmlConverterUC.resx">
+      <DependentUpon>JsonXmlConverterUC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

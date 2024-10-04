@@ -107,7 +107,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonCmpLib.cs" />
+    <Compile Include="Common.cs" />
+    <Compile Include="Model\JsonXmlConversionResult .cs" />
     <Compile Include="Model\Parameter\XmlParameterModel.cs" />
     <Compile Include="Services\ExcelServices\ExcelComonServices.cs" />
     <Compile Include="Services\ParameterServices.cs" />
