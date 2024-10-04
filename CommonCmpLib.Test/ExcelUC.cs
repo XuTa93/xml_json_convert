@@ -99,6 +99,7 @@ namespace CommonCmpLib_Test
         private void btn_CreateTemplate_Click(object sender, EventArgs e)
         {
            Common.ListTraceToXml();
+           TraceService.TraceServiceMain(m_strExcel_Path);
         }
 
         private void GetSheetNames()

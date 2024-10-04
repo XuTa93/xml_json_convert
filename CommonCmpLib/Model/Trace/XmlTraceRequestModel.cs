@@ -38,7 +38,7 @@ namespace CommonCmpLib
     public class Parameters
     {
         [XmlElement("parameter")]
-        public List<Parameter> ParameterList { get; set; } = new List<Parameter>();
+        public List<Parameter> ParameterList { get; set; }
     } 
 
     public class Parameter

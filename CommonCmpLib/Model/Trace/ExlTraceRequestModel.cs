@@ -1,17 +1,20 @@
-﻿namespace CommonCmpLib.Model
+﻿using System.Collections.Generic;
+
+namespace CommonCmpLib
 {
     public class ExlTraceRequestModel
     {
         // Mandatory fields
-        public string TraceID { get; set; } // Corresponds to 'traceid'
-        public string TraceName { get; set; } // Corresponds to 'tracename'
-        public string ParameterID { get; set; } // Corresponds to 'paramid'
+        public string No { get; set; }
+        public string TraceID { get; set; }
+        public string TraceName { get; set; }
+        public string ParameterID { get; set; }
 
         // Optional fields
-        public string Description { get; set; } // Corresponds to 'description'
-        public string StartOn { get; set; } // Corresponds to 'starton'
-        public string StopOn { get; set; } // Corresponds to 'stopon'
-    }
+        public string Description { get; set; }
+        public string StartOn { get; set; }
+        public string StopOn { get; set; }
 
+    }
 
 }

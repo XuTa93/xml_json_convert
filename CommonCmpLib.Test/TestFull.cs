@@ -16,6 +16,5 @@ namespace CommonCmpLib_Test
         {
             InitializeComponent();
         }
-
     }
 }
