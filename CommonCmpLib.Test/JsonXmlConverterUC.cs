@@ -87,7 +87,7 @@ namespace CommonCmpLib_Test
         {
             string strExtesionFile;
             string strTimestamp;
-            JsonXmlConversionResult objResult;
+            JsonXmlConvertResult objResult;
             // Get the current timestamp for logging
             strTimestamp = DateTime.Now.ToString("HH:mm:ss");
 
@@ -110,7 +110,7 @@ namespace CommonCmpLib_Test
             }
 
             // Log the result with the status and message
-            rtxt_Log.AppendText($"{strTimestamp} Parameter file: {objResult.Message}{Environment.NewLine}");
+            rtxt_Log.AppendText($"{strTimestamp} - {objResult.Message}{Environment.NewLine}");
 
         }
 

@@ -24,7 +24,7 @@ namespace CommonCmpLib_Test
 
         private void ExportParameterSheet(string x_strExcel_Path)
         {
-            ExlParameterProcess objParameterProcess;
+            ExcelProcessResult<ExlParameterModel> objParameterProcess;
             bool IsSheetExits;
             IsSheetExits = m_lstSheetName
                             .Any(sheetName => sheetName == ExcelSheetName.Parameter.ToString());
@@ -83,7 +83,11 @@ namespace CommonCmpLib_Test
 
         private void BtnExcelToXml_Click(object sender, EventArgs e)
         {
-            //CommonCmpLib.CommonCmpLib.ListParameterToXml();
+            string filePath = "parameters.xml";
+            //File.WriteAllText(filePath, xmlString);
+            //var a = Common.ConvertXmlToJson_Parameter(filePath, "parameters.json");
+            //var b =Common.ConvertJsonToXml_Parameter("parameters.json", filePath);
+
             GetSheetNames();
             if (m_lstSheetName == null)
             {
@@ -94,7 +98,7 @@ namespace CommonCmpLib_Test
 
         private void btn_CreateTemplate_Click(object sender, EventArgs e)
         {
-
+           Common.ListTraceToXml();
         }
 
         private void GetSheetNames()

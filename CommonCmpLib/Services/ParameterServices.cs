@@ -26,9 +26,9 @@ namespace CommonCmpLib
         private const int START_ROW = HEADER_ROW + 1;
         static readonly List<string> LIST_COLUMN = new List<string> {"", A1, B1, C1, D1, E1, F1, G1, H1, I1, J1, K1, L1, M1, N1 };
 
-        public static ExlParameterProcess ReadParametersFromExcel(string x_strfilePath)
+        public static ExcelProcessResult<ExlParameterModel> ReadParametersFromExcel(string x_strfilePath)
         {
-            ExlParameterProcess objParProcess;
+            ExcelProcessResult<ExlParameterModel> objParProcess;
             List<ExlParameterModel> lstParameter;
             ExlParameterModel objParameter;
             List<string> lstHeaderErr;
@@ -126,8 +126,8 @@ namespace CommonCmpLib
                         uRow++;
                     }
 
-                    objParProcess = new ExlParameterProcess();
-                    objParProcess.ParameterModels = lstParameter;
+                    objParProcess = new ExcelProcessResult<ExlParameterModel>();
+                    objParProcess.Models = lstParameter;
                     objParProcess.TotalRow = uRow - START_ROW;
                     objParProcess.IsSuccess = bIsSuccess;
                     objParProcess.CellError = lstCellErr;

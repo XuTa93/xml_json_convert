@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CommonCmpLib
+﻿namespace CommonCmpLib
 {
-    public class JsonXmlConversionResult
+    public class JsonXmlConvertResult
     {
         /// <summary>
         /// Indicates whether the conversion was successful or not.
