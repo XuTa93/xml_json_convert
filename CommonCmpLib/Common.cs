@@ -44,7 +44,7 @@ namespace CommonCmpLib
 
         public static void ListParameterToXml()
         {
-            StringBuilder sb;
+            //StringBuilder sb;
 
 
             // Create an example ParametersModel instance

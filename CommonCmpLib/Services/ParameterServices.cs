@@ -26,8 +26,13 @@ namespace CommonCmpLib
         private const int START_ROW = HEADER_ROW + 1;
         static readonly List<string> LIST_COLUMN = new List<string> {"", A1, B1, C1, D1, E1, F1, G1, H1, I1, J1, K1, L1, M1, N1 };
 
-        public static ExcelProcessResult<ExlParameterModel> ReadParametersFromExcel(string x_strfilePath)
+        /// <summary>
+        /// Read Parameters Sheet From Excel File 
+        /// </summary>
+        /// <returns></returns>
+        public static ExcelProcessResult<ExlParameterModel> ReadFromExcel(string x_strfilePath)
         {
+            // Initialize variables for processing
             ExcelProcessResult<ExlParameterModel> objParProcess;
             List<ExlParameterModel> lstParameter;
             ExlParameterModel objParameter;
@@ -35,100 +40,140 @@ namespace CommonCmpLib
             List<string> lstCellErr;
             IXLWorksheet objWorksheet;
             bool bIsSuccess = true;
-            int uRow = START_ROW; // Assuming the first row is the header
+            int nRow = START_ROW; // Assuming the first row is the header
+
+            // Initialize lists for storing errors and parameters
             lstHeaderErr = new List<string>();
             lstCellErr = new List<string>();
             lstParameter = new List<ExlParameterModel>();
+
+            // Open Excel file stream for reading
             using (FileStream objStream = new FileStream(x_strfilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
+                // Load Excel workbook
                 using (XLWorkbook workbook = new XLWorkbook(objStream))
                 {
                     objWorksheet = workbook.Worksheet(ExcelSheetName.Parameter.ToString());
 
-                    // Check Header Error
+                    // Check for header errors
                     for (int i = 1; i < LIST_COLUMN.Count; i++)
                     {
                         string strHeaderName = objWorksheet.Cell(HEADER_ROW, i).GetValue<string>();
+
+                        // If header does not match, log an error and set IsSuccess to false
                         if (strHeaderName != LIST_COLUMN[i])
                         {
                             lstHeaderErr.Add($"{objWorksheet.Cell(HEADER_ROW, i).Address} : {strHeaderName} != {LIST_COLUMN[i]}");
                             bIsSuccess = false;
-                        };
+                        }
                     }
 
-                    while (!objWorksheet.Cell(uRow, 1).IsEmpty())
+                    // Process each row until an empty cell is encountered in the first column
+                    while (!objWorksheet.Cell(nRow, 1).IsEmpty())
                     {
-                        List<string> lstRowErr = new List<string>();
-                        lstRowErr.Add($"Row {uRow} :");
+                        bool bCheckCellErr = false;
+                        // Check for rows errors
+                        string strRowErr = "";
+                        strRowErr += ($"Row {nRow} has cells that have not been entered : ");
+
                         objParameter = new ExlParameterModel();
-                        objParameter.No = objWorksheet.Cell(uRow, 1).GetValue<string>();
-                        objParameter.ParameterID = objWorksheet.Cell(uRow, 2).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.ParameterID))
+
+                        // Read each column's value and validate
+                        objParameter.No = objWorksheet.Cell(nRow, 1).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.No) == true)
                         {
-                            lstRowErr.Add("ParameterID");
+                            strRowErr += $"{A1} ,";
+                            bCheckCellErr = true;
                         }
-                        objParameter.ParameterName = objWorksheet.Cell(uRow, 3).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.ParameterName))
+                        objParameter.ParameterID = objWorksheet.Cell(nRow, 2).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.ParameterID) == true)
                         {
-                            lstRowErr.Add ("ParameterName");
-                        }
-                        objParameter.Locator = objWorksheet.Cell(uRow, 4).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.Locator))
-                        {
-                            lstRowErr.Add("Locator");
-                        }
-                        objParameter.Unit = objWorksheet.Cell(uRow, 5).GetValue<string>();
-                        objParameter.Type = objWorksheet.Cell(uRow, 6).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.Type))
-                        {
-                            lstRowErr.Add("Type");
-                        }
-                        objParameter.Array = objWorksheet.Cell(uRow, 7).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.Array))
-                        {
-                            lstRowErr.Add("Array");
-                        }
-                        objParameter.Function = objWorksheet.Cell(uRow, 8).GetValue<string>();
-                        objParameter.Arg = objWorksheet.Cell(uRow, 9).GetValue<string>();
-                        objParameter.Sourcetype = objWorksheet.Cell(uRow, 10).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.Sourcetype))
-                        {
-                            lstRowErr.Add("Sourcetype");
-                        }              
-                        objParameter.MemoryName = objWorksheet.Cell(uRow, 11).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.MemoryName))
-                        {
-                            lstRowErr.Add("MemoryName");
-                        }
-                        objParameter.Offset = objWorksheet.Cell(uRow, 12).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.Offset))
-                        {
-                            lstRowErr.Add("Offset");
-                        }
-                        objParameter.SourceType = objWorksheet.Cell(uRow, 13).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.SourceType))
-                        {
-                            lstRowErr.Add("SourceType");
-                        }
-                        objParameter.SourceArray = objWorksheet.Cell(uRow, 14).GetValue<string>();
-                        if (string.IsNullOrEmpty(objParameter.SourceArray))
-                        {
-                            lstRowErr.Add("SourceArray");
+                            strRowErr += $"{B1} ,";
+                            bCheckCellErr = true;
                         }
 
-                        if (lstRowErr.Count > 1)
+                        objParameter.ParameterName = objWorksheet.Cell(nRow, 3).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.ParameterName) == true)
                         {
-                            lstCellErr.Add(JsonConvert.SerializeObject(lstRowErr));
+                            strRowErr += $"{C1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.Locator = objWorksheet.Cell(nRow, 4).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.Locator) == true)
+                        {
+                            strRowErr += $"{D1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.Unit = objWorksheet.Cell(nRow, 5).GetValue<string>();
+                        objParameter.Type = objWorksheet.Cell(nRow, 6).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.Type) == true)
+                        {
+                            strRowErr += $"{F1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.Array = objWorksheet.Cell(nRow, 7).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.Array) == true)
+                        {
+                            strRowErr += $"{G1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.Function = objWorksheet.Cell(nRow, 8).GetValue<string>();
+                        objParameter.Arg = objWorksheet.Cell(nRow, 9).GetValue<string>();
+                        objParameter.Sourcetype = objWorksheet.Cell(nRow, 10).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.Sourcetype) == true)
+                        {
+                            strRowErr += $"{J1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.MemoryName = objWorksheet.Cell(nRow, 11).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.MemoryName) == true)
+                        {
+                            strRowErr += $"{K1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.Offset = objWorksheet.Cell(nRow, 12).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.Offset) == true)
+                        {
+                            strRowErr += $"{L1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.SourceType = objWorksheet.Cell(nRow, 13).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.SourceType) == true)
+                        {
+                            strRowErr += $"{M1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        objParameter.SourceArray = objWorksheet.Cell(nRow, 14).GetValue<string>();
+                        if (string.IsNullOrEmpty(objParameter.SourceArray) == true)
+                        {
+                            strRowErr += $"{N1} ,";
+                            bCheckCellErr = true;
+                        }
+
+                        // If there are any errors in the row, log them and set IsSuccess to false
+                        if (bCheckCellErr == true)
+                        {
+                            lstCellErr.Add(strRowErr);
                             bIsSuccess = false;
                         }
 
+                        // Add the processed parameter to the list
                         lstParameter.Add(objParameter);
-                        uRow++;
+                        nRow++;
                     }
 
+                    // Prepare the result object with the processed data and any errors
                     objParProcess = new ExcelProcessResult<ExlParameterModel>();
                     objParProcess.Models = lstParameter;
-                    objParProcess.TotalRow = uRow - START_ROW;
+                    objParProcess.TotalRow = nRow - START_ROW;
                     objParProcess.IsSuccess = bIsSuccess;
                     objParProcess.CellError = lstCellErr;
                     objParProcess.HeadersError = lstHeaderErr;
@@ -136,6 +181,7 @@ namespace CommonCmpLib
             }
             return objParProcess;
         }
+
 
         public static bool ExportParameterToXml(List<ExlParameterModel> x_lstParaModel, string x_FolderPath)
         {

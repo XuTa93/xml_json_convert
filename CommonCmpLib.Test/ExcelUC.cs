@@ -30,7 +30,7 @@ namespace CommonCmpLib_Test
                             .Any(sheetName => sheetName == ExcelSheetName.Parameter.ToString());
             if (IsSheetExits)
             {
-                objParameterProcess = ParameterServices.ReadParametersFromExcel(x_strExcel_Path);
+                objParameterProcess = ParameterServices.ReadFromExcel(x_strExcel_Path);
                 rtxt_Log.Text += $" ParameterSheet: IsSuccess = {objParameterProcess.IsSuccess}, " +
                     $"Tool Row = {objParameterProcess.TotalRow },Row Err = {objParameterProcess.CellError.Count}, " +
                     $"Header Err = {objParameterProcess.HeadersError.Count}\r\n";
@@ -83,7 +83,7 @@ namespace CommonCmpLib_Test
 
         private void BtnExcelToXml_Click(object sender, EventArgs e)
         {
-            string filePath = "parameters.xml";
+            //string filePath = "parameters.xml";
             //File.WriteAllText(filePath, xmlString);
             //var a = Common.ConvertXmlToJson_Parameter(filePath, "parameters.json");
             //var b =Common.ConvertJsonToXml_Parameter("parameters.json", filePath);
@@ -99,7 +99,10 @@ namespace CommonCmpLib_Test
         private void btn_CreateTemplate_Click(object sender, EventArgs e)
         {
            Common.ListTraceToXml();
-           TraceService.TraceServiceMain(m_strExcel_Path);
+           TraceService.ReadFromExcel(m_strExcel_Path);
+           ParameterServices.ReadFromExcel(m_strExcel_Path);
+           EventService.ReadFromExcel(m_strExcel_Path);
+           DCPService.ReadFromExcel(m_strExcel_Path);
         }
 
         private void GetSheetNames()

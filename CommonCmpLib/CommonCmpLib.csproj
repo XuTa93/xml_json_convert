@@ -108,12 +108,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="Model\DataCollectionPlan\ExlDCPModel.cs" />
+    <Compile Include="Model\Event\ExlEventRequestModel.cs" />
     <Compile Include="Model\JsonXmlConvertResult .cs" />
     <Compile Include="Model\ExcelProcessResult.cs" />
     <Compile Include="Model\Trace\ExlTraceRequestModel.cs" />
     <Compile Include="Model\Parameter\XmlParameterModel.cs" />
     <Compile Include="Model\Trace\XmlTraceRequestModel.cs" />
+    <Compile Include="Services\DCPService.cs" />
+    <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\ExcelServices\ExcelComonServices.cs" />
+    <Compile Include="Services\ICommonService.cs" />
     <Compile Include="Services\ParameterServices.cs" />
     <Compile Include="JsonToXmlModel\EventRequestModel.cs" />
     <Compile Include="Model\Parameter\ExlParameterModel.cs" />

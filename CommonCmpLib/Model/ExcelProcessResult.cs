@@ -14,6 +14,8 @@ namespace CommonCmpLib
         public List<string> CellError { get; internal set; }
         public List<T> Models { get; set; }
 
+        public string Message { get; internal set; } = string.Empty; 
+
         // Constructor
         public ExcelProcessResult()
         {
