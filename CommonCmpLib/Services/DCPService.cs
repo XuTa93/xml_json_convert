@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace CommonCmpLib
 {
@@ -47,9 +48,11 @@ namespace CommonCmpLib
             List<string> lstHeaderErr;
             List<string> lstCellErr;
             IXLWorksheet objWorksheet;
-            bool bIsSuccess = true;
+            bool bIsSuccess;
+            StringBuilder strMessage;
 
             // Initialize lists for storing errors and plan data
+            bIsSuccess = true;
             lstHeaderErr = new List<string>();
             lstCellErr = new List<string>();
             lstPlanList = new List<ExlDCPModel>();
@@ -69,7 +72,7 @@ namespace CommonCmpLib
                         bIsSuccess = lstHeaderErr.Count == 0;
 
                         // Extract data from worksheet
-                        lstPlanList = ExtractDataFromWorksheet(objWorksheet, ref bIsSuccess, lstCellErr);
+                        lstPlanList = ExtractDataFromWorksheet(objWorksheet);
                     }
                 }
 
@@ -77,25 +80,49 @@ namespace CommonCmpLib
                 lstCellErr = ValidateMandatoryFieldsAndFillCell(lstPlanList);
 
                 // Prepare the result object with the processed data and any errors
+                bIsSuccess = bIsSuccess && (lstCellErr.Any() == false);
+
+                // Prepare the message
+                strMessage = new StringBuilder();
+                strMessage.AppendLine(bIsSuccess ? $"{SHEET_NAME} Processing completed successfully." : $"{SHEET_NAME} : There were errors during processing.");
+
+                if (lstHeaderErr.Any())
+                {
+                    strMessage.AppendLine($"\t- {SHEET_NAME} Header Error:");
+                    foreach (string headerErr in lstHeaderErr)
+                    {
+                        strMessage.AppendLine($"\t\t+ {headerErr}");
+                    }
+                }
+
+                if (lstCellErr.Any())
+                {
+                    strMessage.AppendLine($"\t- {SHEET_NAME} Cell Error:");
+                    foreach (string cellErr in lstCellErr)
+                    {
+                        strMessage.AppendLine($"\t\t+ {cellErr}");
+                    }
+                }
+
                 objPlanProcess = new ExcelProcessResult<ExlDCPModel>
                 {
                     Models = lstPlanList,
                     TotalRow = lstPlanList.Count,
-                    IsSuccess = bIsSuccess && (lstCellErr.Any() == false),
+                    IsSuccess = bIsSuccess,
                     CellError = lstCellErr,
                     HeadersError = lstHeaderErr,
-                    Message = bIsSuccess ? $"{SHEET_NAME} Processing completed successfully." : $"{SHEET_NAME} : There were errors during processing."
+                    Message = strMessage.ToString().TrimEnd() // Loại bỏ ký tự trắng ở cuối
                 };
 
                 return objPlanProcess;
             }
             catch (IOException objEx)
             {
-                return CreateErrorResult($"{SHEET_NAME} Error reading the Excel file: {objEx.Message}");
+                return CreateErrorResult($"{SHEET_NAME} Sheet Error reading the Excel file: {objEx.Message}");
             }
             catch (Exception objEx)
             {
-                return CreateErrorResult($"{SHEET_NAME} An error occurred: {objEx.Message}");
+                return CreateErrorResult($"{SHEET_NAME} Sheet An error occurred: {objEx.Message}");
             }
         }
 
@@ -117,32 +144,44 @@ namespace CommonCmpLib
         }
 
         /// <summary>
-        /// Validate Headers
+        /// Validate Headers in the specified worksheet against predefined column headers.
         /// </summary>
+        /// <param name="x_objWorksheet">The worksheet to validate.</param>
+        /// <param name="lstHeaderErr">The list to store header errors.</param>
         private static void ValidateHeaders(IXLWorksheet x_objWorksheet, List<string> lstHeaderErr)
         {
+            // Iterate through each defined header in COLUMN_HEADERS
             foreach (KeyValuePair<string, string> header in COLUMN_HEADERS)
             {
+                // Retrieve the header name from the worksheet
                 string strHeaderName = x_objWorksheet.Cell(header.Key).GetValue<string>();
+
+                // Compare the retrieved header name with the expected value
                 if (strHeaderName != header.Value)
                 {
+                    // If they do not match, log the error
                     lstHeaderErr.Add($"{header.Key} : {strHeaderName} != {header.Value}");
                 }
             }
         }
 
         /// <summary>
-        /// Extract data from worksheet 
+        /// Extract data from the specified worksheet.
         /// </summary>
-        /// <returns></returns>
-        private static List<ExlDCPModel> ExtractDataFromWorksheet(IXLWorksheet x_objWorksheet, ref bool x_bIsSuccess, List<string> x_lstCellErr)
+        /// <param name="x_objWorksheet">The worksheet to extract data from.</param>
+        /// <param name="x_bIsSuccess">Flag indicating success of the operation (passed by reference).</param>
+        /// <param name="x_lstCellErr">List to store any cell errors encountered.</param>
+        /// <returns>List of extracted ExlDCPModel objects.</returns>
+        private static List<ExlDCPModel> ExtractDataFromWorksheet(IXLWorksheet x_objWorksheet)
         {
             List<ExlDCPModel> lstPlanList = new List<ExlDCPModel>();
             int nRow = START_ROW;
 
+            // Loop through the rows until an empty cell is found in the 9th column
             while (!x_objWorksheet.Cell(nRow, 9).IsEmpty())
             {
-                var objPlanData = new ExlDCPModel
+                // Create a new instance of ExlDCPModel and populate it with cell values
+                ExlDCPModel objPlanData = new ExlDCPModel
                 {
                     No = GetCellValue<string>(x_objWorksheet, nRow, 1),
                     MachineName = GetCellValue<string>(x_objWorksheet, nRow, 2),
@@ -155,6 +194,7 @@ namespace CommonCmpLib
                     ParameterID = GetCellValue<string>(x_objWorksheet, nRow, 9)
                 };
 
+                // Optionally validate objPlanData here and add errors to x_lstCellErr if needed
                 lstPlanList.Add(objPlanData);
                 nRow++;
             }
@@ -163,9 +203,10 @@ namespace CommonCmpLib
         }
 
         /// <summary>
-        /// Validate MandatoryFields And Fill Empty Cells
+        /// Validate mandatory fields and fill in empty cells if necessary.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="x_lstPlanList">List of plans to validate.</param>
+        /// <returns>List of error messages for any mandatory fields that were not filled.</returns>
         private static List<string> ValidateMandatoryFieldsAndFillCell(List<ExlDCPModel> x_lstPlanList)
         {
             List<string> lstCellErr = new List<string>();
@@ -173,14 +214,14 @@ namespace CommonCmpLib
             // Loop through each plan entry
             for (int i = 0; i < x_lstPlanList.Count; i++)
             {
-                bool bCheckCellErr = false;
-                string strRowErr = $"Row {i + START_ROW} has cells that have not been entered : ";
+                bool bHasCellError = false; // Flag to indicate if there are any cell errors
+                string strRowErr = $"Row {i + START_ROW} has cells that have not been entered: ";
 
                 // Check if the current row is the first or has a filled 'No' field
                 if (i == 0 || !string.IsNullOrEmpty(x_lstPlanList[i].No))
                 {
                     // Check mandatory fields for the current row
-                    CheckMandatoryFields(x_lstPlanList[i], ref strRowErr, ref bCheckCellErr);
+                    CheckMandatoryFields(x_lstPlanList[i], ref strRowErr, ref bHasCellError);
                 }
                 else
                 {
@@ -189,9 +230,13 @@ namespace CommonCmpLib
                 }
 
                 // If there are any errors in the row, add them to the list
-                if (bCheckCellErr)
+                if (bHasCellError)
                 {
-                    lstCellErr.Add(strRowErr);
+                    // Ensure strRowErr is not just the initial message
+                    if (strRowErr != $"Row {i + START_ROW} has cells that have not been entered: ")
+                    {
+                        lstCellErr.Add(strRowErr);
+                    }
                 }
             }
 
@@ -201,17 +246,20 @@ namespace CommonCmpLib
         /// <summary>
         /// Copy values from the previous row into the current row for missing fields.
         /// </summary>
+        /// <param name="x_lstPlanList">List of plans containing the data.</param>
+        /// <param name="x_nIndex">Index of the current row to fill in.</param>
         private static void CopyFromPreviousRow(List<ExlDCPModel> x_lstPlanList, int x_nIndex)
         {
-            x_lstPlanList[x_nIndex].No = x_lstPlanList[x_nIndex - 1].No;
-            x_lstPlanList[x_nIndex].MachineName = x_lstPlanList[x_nIndex - 1].MachineName;
-            x_lstPlanList[x_nIndex].PlanID = x_lstPlanList[x_nIndex - 1].PlanID;
-            x_lstPlanList[x_nIndex].PlanName = x_lstPlanList[x_nIndex - 1].PlanName;
-            x_lstPlanList[x_nIndex].Description = x_lstPlanList[x_nIndex - 1].Description;
-            x_lstPlanList[x_nIndex].StartEvent = x_lstPlanList[x_nIndex - 1].StartEvent;
-            x_lstPlanList[x_nIndex].EndEvent = x_lstPlanList[x_nIndex - 1].EndEvent;
-            x_lstPlanList[x_nIndex].TimeRequest = x_lstPlanList[x_nIndex - 1].TimeRequest;
-            x_lstPlanList[x_nIndex].ParameterID = x_lstPlanList[x_nIndex - 1].ParameterID;
+            ExlDCPModel previousRow = x_lstPlanList[x_nIndex - 1];
+            // Copy values from the previous row
+            x_lstPlanList[x_nIndex].No = previousRow.No;
+            x_lstPlanList[x_nIndex].MachineName = previousRow.MachineName;
+            x_lstPlanList[x_nIndex].PlanID = previousRow.PlanID;
+            x_lstPlanList[x_nIndex].PlanName = previousRow.PlanName;
+            x_lstPlanList[x_nIndex].Description = previousRow.Description;
+            x_lstPlanList[x_nIndex].StartEvent = previousRow.StartEvent;
+            x_lstPlanList[x_nIndex].EndEvent = previousRow.EndEvent;
+            x_lstPlanList[x_nIndex].TimeRequest = previousRow.TimeRequest;
         }
 
         /// <summary>
@@ -237,11 +285,18 @@ namespace CommonCmpLib
                 x_bCheckCellErr = true;
             }
 
+            if (string.IsNullOrEmpty(x_objPlan.PlanName))
+            {
+                x_strRowErr += $"{D1} ,";
+                x_bCheckCellErr = true;
+            }
+
             if (string.IsNullOrEmpty(x_objPlan.ParameterID))
             {
                 x_strRowErr += $"{I2} ,";
                 x_bCheckCellErr = true;
             }
+            x_strRowErr = x_strRowErr.TrimEnd(',', ' ');
         }
 
         /// <summary>
