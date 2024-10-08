@@ -81,15 +81,19 @@ namespace CommonCmpLib_Test
             //DCPService.ReadFromExcel(m_strExcel_Path);
             rtxt_Log.Text += "--------------------------------------------------->\r\n";
 
-            var excelDataService = ExcelDataService.Create(ExcelSheetName.Event);
-            var a = excelDataService.Read(m_strExcel_Path);
-            rtxt_Log.Text += a.Message;
+            var @event = ExcelDataService.Create(ExcelSheetName.Event);
+            var evResutl = @event.Read(m_strExcel_Path);
+            if (evResutl.IsSuccess == true)
+            {
+                Common.DictionaryDataXml(evResutl);
+            }
+            rtxt_Log.Text += evResutl.Message;
 
             var dcp = ExcelDataService.Create(ExcelSheetName.DataCollectionPlan);
             var dcpresult = dcp.Read(m_strExcel_Path);
             if (dcpresult.IsSuccess == true)
             {
-                Common.DictionaryDataXml(dcpresult);
+                //Common.DictionaryDataXml(dcpresult);
             }
             rtxt_Log.Text += dcpresult.Message;
 

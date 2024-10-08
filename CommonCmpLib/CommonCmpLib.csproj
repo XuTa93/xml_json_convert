@@ -109,7 +109,7 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="Model\DataCollectionPlan\ExlDCPModel.cs" />
-    <Compile Include="Model\Event\ExlEventRequestModel.cs" />
+    <Compile Include="Model\Event\ExlEventModel.cs" />
     <Compile Include="Model\JsonXmlConvertResult .cs" />
     <Compile Include="Model\ExcelProcessResult.cs" />
     <Compile Include="Model\Trace\ExlTraceRequestModel.cs" />

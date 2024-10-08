@@ -290,7 +290,23 @@ namespace CommonCmpLib
                 // Retrieve and store the value of each cell in the current row, using the header as the key
                 foreach (KeyValuePair<string, string> objHeader in Colunms)
                 {
-                    objRowData[objHeader.Value] = GetCellValue<string>(x_objWorksheet, nRow, objHeader.Key);
+                    // Convert value Equation in Event  
+                    if ( (SheetName == EVENT.SHEET_NAME) && (objHeader.Value == DEFINE.Equation) )
+                    {
+                        string strEquation = GetCellValue<string>(x_objWorksheet, nRow, objHeader.Key);
+                        if (strEquation == "!=")
+                        {
+                            objRowData[objHeader.Value] = "1";
+                        }
+                        else if (strEquation == "=")
+                        {
+                            objRowData[objHeader.Value] = "0";
+                        }
+                    }
+                    else
+                    {
+                        objRowData[objHeader.Value] = GetCellValue<string>(x_objWorksheet, nRow, objHeader.Key);
+                    }                
                 }
 
                 // Add the row data to the list

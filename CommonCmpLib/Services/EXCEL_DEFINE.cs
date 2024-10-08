@@ -39,6 +39,11 @@ namespace CommonCmpLib
         public const string StopOn = "StopOn";
 
         //Event
+        public const string EventID = "EventID";
+        public const string EventName = "EventName";
+        public const string AndOr = "AndOr";
+        public const string Equation = "Equation";
+        public const string Value = "Value";
 
         //DataCollectionPlan
         public const string MachineName = "MachineName";
@@ -105,12 +110,12 @@ namespace CommonCmpLib
         public static readonly Dictionary<string, string> COLUNMS = new Dictionary<string, string>
         {
             { "A1", DEFINE.No },
-            { "B1", "EventID" },
-            { "C1", "EventName" },
-            { "D2", "AndOr" },
+            { "B1", DEFINE.EventID },
+            { "C1", DEFINE.EventName },
+            { "D2", DEFINE.AndOr },
             { "E2", DEFINE.ParameterID },
-            { "F2", "Equation" },
-            { "G2", "Value" },
+            { "F2", DEFINE.Equation },
+            { "G2", DEFINE.Value },
         };
     }
     public static class DCP
