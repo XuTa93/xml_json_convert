@@ -20,24 +20,6 @@ namespace CommonCmpLib_Test
         {
             ExcelProcessResult<ExlParameterModel> objParameterProcess;
             bool IsSheetExits;
-            IsSheetExits = m_lstSheetName
-                            .Any(sheetName => sheetName == ExcelSheetName.Parameter.ToString());
-            if (IsSheetExits)
-            {
-                objParameterProcess = ParameterServices.ReadFromExcel(x_strExcel_Path);
-                rtxt_Log.Text += $" ParameterSheet: IsSuccess = {objParameterProcess.IsSuccess}, " +
-                    $"Tool Row = {objParameterProcess.TotalRow },Row Err = {objParameterProcess.CellError.Count}, " +
-                    $"Header Err = {objParameterProcess.HeadersError.Count}\r\n";
-
-                if (objParameterProcess.IsSuccess == true)
-                {
-
-                }
-            }
-            else
-            {
-                rtxt_Log.Text += $"{ExcelSheetName.Parameter} Sheet Not Exits!\r\n";
-            }
         }
         private void btn_Excel_Path_Click(object objSender, EventArgs objEvt)
         {
@@ -97,27 +79,33 @@ namespace CommonCmpLib_Test
             //ParameterServices.ReadFromExcel(m_strExcel_Path);
             //EventService.ReadFromExcel(m_strExcel_Path);
             //DCPService.ReadFromExcel(m_strExcel_Path);
-            Dictionary<string, string> COLUMN_HEADERS = new Dictionary<string, string>
-        {
-            { "A1", "No."  },
-            { "B1", "MachineName" },
-            { "C1", "PlanID" },
-            { "D1", "PlanName" },
-            { "E1", "Description" },
-            { "F1", "StartEvent" },
-            { "G1", "EndEvent" },
-            { "H1", "TimeRequest" },
-            { "I2", "ParameterID" }
-        };
-            string[] Mandatoryfields = new string[]{ "No.", "MachineName", "PlanID", "PlanName", "ParameterID" };
+            rtxt_Log.Text += "--------------------------------------------------->\r\n";
 
-            ExcelDataService excelDataService = new ExcelDataService(COLUMN_HEADERS, "DataCollectionPlan", 2, 9, Mandatoryfields);
-            excelDataService.ReadFromExcel(m_strExcel_Path);
+            var excelDataService = ExcelDataService.Create(ExcelSheetName.Event);
+            var a = excelDataService.Read(m_strExcel_Path);
+            rtxt_Log.Text += a.Message;
+
+            var dcp = ExcelDataService.Create(ExcelSheetName.DataCollectionPlan);
+            var réultdcp = dcp.Read(m_strExcel_Path);
+            rtxt_Log.Text += réultdcp.Message;
+
+            var excelData = ExcelDataService.Create(ExcelSheetName.Parameter);
+            var objPara = excelData.Read(m_strExcel_Path);
+            if (objPara.IsSuccess == true)
+            {
+                Common.DictionaryDataXml(objPara);
+            }
+            rtxt_Log.Text += objPara.Message;
+
+            var trace = ExcelDataService.Create(ExcelSheetName.Trace);
+            var traceresult = trace.Read(m_strExcel_Path);
+            rtxt_Log.Text += traceresult.Message;
+            rtxt_Log.Text += "<--------------------------------------------------\r\n";
         }
 
         private void GetSheetNames()
         {
-            m_lstSheetName = ExcelComonServices.GetSheetNames(m_strExcel_Path);
+            m_lstSheetName = ExcelDataService.GetSheetNames(m_strExcel_Path);
             if (m_lstSheetName == null)
             {
                 MessageBox.Show("File Not Found!");

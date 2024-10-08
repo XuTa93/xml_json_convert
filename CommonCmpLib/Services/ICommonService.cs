@@ -11,9 +11,8 @@ namespace CommonCmpLib
     {
         #region Fields
         private Dictionary<string, string> m_objColunms;
-        private int m_nRowStart;
         private int m_nRowHeader;
-        private int m_nColunmKey;
+        private string m_nColunmKey;
         private string m_strSheetName;
         private ExcelProcessResult m_objProcessResult;
         private string[] m_arrMandatoryFields;
@@ -28,7 +27,13 @@ namespace CommonCmpLib
                 return m_objColunms;
             }
         }
-        public int RowStart { get => m_nRowStart; }
+        public int RowStart 
+        {
+            get 
+            { 
+                return m_nRowHeader + 1; 
+            }
+        }
         public int RowHeader
         {
             get
@@ -36,7 +41,7 @@ namespace CommonCmpLib
                 return m_nRowHeader;
             }
         }
-        public int ColunmKey
+        public string ColunmKey
         {
             get
             {
@@ -68,34 +73,77 @@ namespace CommonCmpLib
 
         #region Contructors
         /// <summary>
-        /// Contructors
+        /// Constructor to enforce factory method
         /// </summary>
-        public ExcelDataService(Dictionary<string, string> x_objColunm, string x_strSheetName, int x_nRowHeader, int x_nColunmKey, string[] x_lstMandatoryFields)
+        public ExcelDataService(string x_strSheetName, int x_nRowHeader, string x_nColunmKey, string[] x_lstMandatoryFields, Dictionary<string, string> x_objColunm)
         {
             m_objColunms = x_objColunm;
             m_nRowHeader = x_nRowHeader;
-            m_nRowStart = m_nRowHeader + 1;
             m_strSheetName = x_strSheetName;
             m_nColunmKey = x_nColunmKey;
             m_arrMandatoryFields = x_lstMandatoryFields;
         }
 
-        public ExcelDataService()
+        // Factory method
+        public static ExcelDataService Create(ExcelSheetName x_strSheetName)
         {
-            m_objColunms = x_objColunm;
-            m_nRowHeader = x_nRowHeader;
-            m_nRowStart = m_nRowHeader + 1;
-            m_strSheetName = x_strSheetName;
-            m_nColunmKey = x_nColunmKey;
-            m_arrMandatoryFields = x_lstMandatoryFields;
+            switch (x_strSheetName)
+            {
+                case ExcelSheetName.DataCollectionPlan:
+                    return new ExcelDataService(DCP.SHEET_NAME, DCP.ROW_HEADER, DCP.COLUNM_KEY, DCP.MANDATORY_FIELDS, DCP.COLUNMS);
+
+                case ExcelSheetName.Event:
+                    return new ExcelDataService(EVENT.SHEET_NAME, EVENT.ROW_HEADER, EVENT.COLUNM_KEY, EVENT.MANDATORY_FIELDS, EVENT.COLUNMS);
+
+                case ExcelSheetName.Parameter:
+                    return new ExcelDataService(PARAMETER.SHEET_NAME, PARAMETER.ROW_HEADER, PARAMETER.COLUNM_KEY, PARAMETER.MANDATORY_FIELDS, PARAMETER.COLUNMS);
+
+                case ExcelSheetName.Trace:
+                    return new ExcelDataService(TRACE.SHEET_NAME, TRACE.ROW_HEADER, TRACE.COLUNM_KEY, TRACE.MANDATORY_FIELDS, TRACE.COLUNMS);
+                default:
+                    break;
+            }
+            throw new ArgumentException("Invalid sheet name");
         }
 
         #endregion Contructors
 
+        #region Methods
+        /// <summary>
+        /// Get All Sheet Name in file
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> GetSheetNames(string x_strfilePath)
+        {
+            List<string> lstSheetNames;
+            bool bIsExits;
+
+            // Check if the file exists
+            bIsExits = File.Exists(x_strfilePath);
+            if (bIsExits == false)
+            {
+                return null;
+            }
+
+            lstSheetNames = new List<string>();
+            using (FileStream objStream = new FileStream(x_strfilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (XLWorkbook workbook = new XLWorkbook(objStream))
+                {
+                    // Loop through all the sheets in the workbook and add their names to the list
+                    foreach (IXLWorksheet worksheet in workbook.Worksheets)
+                    {
+                        lstSheetNames.Add(worksheet.Name);
+                    }
+                }
+            }
+            return lstSheetNames;
+        }
+
         /// <summary>
         /// Process data collection plan from an Excel file.
         /// </summary>
-        public ExcelProcessResult ReadFromExcel(string x_strFilePath)
+        public ExcelProcessResult Read(string x_strFilePath)
         {
             // Initialize variables for processing
             List<Dictionary<string, string>> lstData;
@@ -113,13 +161,24 @@ namespace CommonCmpLib
 
             try
             {
+                // Check if the file exists
+                if (!File.Exists(x_strFilePath))
+                {
+                    m_objProcessResult.IsSuccess = false;
+                    m_objProcessResult.Message = $"- {DateTime.Now} : {SheetName} File not found: {x_strFilePath} {Environment.NewLine}";
+                    return m_objProcessResult;
+                }
+
+                // Get Sheet Name
+                m_objProcessResult.SheetName = SheetName;
+
                 // Open the Excel file stream
                 using (FileStream objStream = new FileStream(x_strFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     // Load the Excel workbook
                     using (XLWorkbook workbook = new XLWorkbook(objStream))
                     {
-                        objWorksheet = workbook.Worksheet(m_strSheetName);
+                        objWorksheet = workbook.Worksheet(SheetName);
 
                         // Validate headers
                         ValidateHeaders(objWorksheet, lstHeaderErr);
@@ -141,56 +200,54 @@ namespace CommonCmpLib
                 m_objProcessResult.HeadersError = lstHeaderErr;
                 m_objProcessResult.CellError = lstCellErr;
                 m_objProcessResult.Models = lstData;
-
+                
                 // Prepare the message
                 strMessage = new StringBuilder();
-                strMessage.Append(m_strSheetName);
+                strMessage.Append("- " + DateTime.Now.ToString() + " : ");
+                strMessage.Append(SheetName);
                 if (bIsSuccess == true)
                 {
-                    strMessage.AppendLine(" Processing completed successfully.");
+                    strMessage.AppendLine(" Processing completed.");
                 }
                 else
                 {
-                    strMessage.Append(" : There were");
-                    strMessage.Append($" {(lstHeaderErr.Count > 0 ? $"{lstHeaderErr.Count} Header error and" : "")}");
-                    strMessage.Append($" {(lstCellErr.Count > 0 ? $"{lstCellErr.Count} Rows error and" : "")}");
-                    strMessage.AppendLine($" Row errors and during processing.");
-
+                    strMessage.Append(" : There were ");
+                    strMessage.Append($"{lstHeaderErr.Count} Headers error, ");
+                    strMessage.AppendLine($"{lstCellErr.Count} Rows error ");
                 }
 
 
                 if (lstHeaderErr.Any())
                 {
-                    strMessage.AppendLine($"\t- {m_strSheetName} Header Error:");
+                    strMessage.AppendLine($"  - {SheetName} Header Error:");
                     foreach (string headerErr in lstHeaderErr)
                     {
-                        strMessage.AppendLine($"\t\t+ {headerErr}");
+                        strMessage.AppendLine($"     + {headerErr}");
                     }
                 }
 
                 if (lstCellErr.Any())
                 {
-                    strMessage.AppendLine($"\t- {m_strSheetName} Cell Error:");
+                    strMessage.AppendLine($"  - {SheetName} Cell Error:");
                     foreach (string cellErr in lstCellErr)
                     {
-                        strMessage.AppendLine($"\t\t+ {cellErr}");
+                        strMessage.AppendLine($"     + {cellErr}");
                     }
                 }
-
-                m_objProcessResult.Message = strMessage.ToString().TrimEnd(); // Remove trailing whitespace
+                m_objProcessResult.Message = strMessage.ToString().TrimEnd() + Environment.NewLine; // Remove trailing whitespace
 
                 return m_objProcessResult;
             }
             catch (IOException objEx)
             {
                 m_objProcessResult.IsSuccess = false;
-                m_objProcessResult.Message = $"{m_strSheetName} Sheet Error reading the Excel file: {objEx.Message}";
+                m_objProcessResult.Message = $"- {DateTime.Now} : {SheetName} Sheet Error reading the Excel file: {objEx.Message} {Environment.NewLine}";
                 return m_objProcessResult;
             }
             catch (Exception objEx)
             {
                 m_objProcessResult.IsSuccess = false;
-                m_objProcessResult.Message = $"{m_strSheetName} Sheet An error occurred: {objEx.Message}";
+                m_objProcessResult.Message = $"- {DateTime.Now} :{m_strSheetName} Sheet An error occurred: {objEx.Message} {Environment.NewLine}";
                 return m_objProcessResult;
             }
         }
@@ -225,7 +282,7 @@ namespace CommonCmpLib
             int nRow = RowHeader + 1;
 
             // Loop through the rows until an empty cell is found in the 9th column
-            while (x_objWorksheet.Cell(nRow, ColunmKey).IsEmpty() == false)
+            while (x_objWorksheet.Cell(nRow, GetColunm(ColunmKey)).IsEmpty() == false)
             {
                 // Create a new dictionary to store values of the current row
                 Dictionary<string, string> objRowData = new Dictionary<string, string>();
@@ -309,7 +366,7 @@ namespace CommonCmpLib
             // Iterate over each field in the current row
             foreach (KeyValuePair<string, string> objField in objPreviousRow)
             {
-                if (objField.Key != "ParameterID")
+                if (objField.Key != "ParameterID" || (string.IsNullOrEmpty(objCurrentRow[objField.Key]) == false))
                 {
                     objCurrentRow[objField.Key] = objPreviousRow[objField.Key];
                 }
@@ -342,5 +399,6 @@ namespace CommonCmpLib
                 throw new ApplicationException($"Failed to get cell value at ({x_nRow}, {x_strColumn}) in Worksheet '{strWorksheetName}': {objEx.Message}", objEx);
             }
         }
+        #endregion Methods
     }
 }

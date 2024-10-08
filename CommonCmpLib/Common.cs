@@ -42,123 +42,124 @@ namespace CommonCmpLib
         private const string DCPTABLES = "DCPTables";
         #endregion Types
 
-        public static void ListParameterToXml()
+        public static string  DictionaryDataXml(ExcelProcessResult x_objResult)
         {
-            //StringBuilder sb;
+            if (x_objResult.IsSuccess == false)
+            {
+                return "";
+            }
 
-
-            // Create an example ParametersModel instance
- 
-            //// Create a StringBuilder to hold the XML content
-            //sb = new StringBuilder();
-            //// Create XmlWriterSettings with OmitXmlDeclaration = true
-            //XmlWriterSettings settings = new XmlWriterSettings
-            //{
-            //    Indent = true,              // Format the XML with indentation
-            //    OmitXmlDeclaration = true,
-            //};
-            //using (XmlWriter writer = XmlWriter.Create(sb, settings))
-            //{
-            //    // Bắt đầu tài liệu XML
-            //    writer.WriteStartDocument();
-            //    writer.WriteStartElement("ns1", "parameters", "urn:ConfigFileSchema");
-
-            //    // Tạo thẻ parameter với các thuộc tính
-            //    writer.WriteStartElement("parameter");
-            //    writer.WriteAttributeString("paramid", parameterModel.ParameterID);
-            //    writer.WriteAttributeString("paramname", parameterModel.ParameterName);
-            //    writer.WriteAttributeString("locator", parameterModel.Locator);
-            //    writer.WriteAttributeString("unit", parameterModel.Unit);
-            //    writer.WriteAttributeString("type", parameterModel.Type);
-            //    writer.WriteAttributeString("array", parameterModel.Array);
-            //    writer.WriteAttributeString("function", parameterModel.Function);
-            //    writer.WriteAttributeString("arg", parameterModel.Arg);
-
-            //    // Bắt đầu phần extension
-            //    writer.WriteStartElement("extension");
-
-            //    // Bắt đầu phần datasource với thuộc tính sourcetype
-            //    writer.WriteStartElement("datasource");
-            //    writer.WriteAttributeString("sourcetype", parameterModel.Extension.DataSource.Sourcetype);
-
-            //    // Bắt đầu phần memory với các thuộc tính
-            //    writer.WriteStartElement("memory");
-            //    writer.WriteAttributeString("memname", parameterModel.Extension.DataSource.Memory.MemoryName);
-            //    writer.WriteAttributeString("offset", parameterModel.Extension.DataSource.Memory.Offset);
-            //    writer.WriteAttributeString("stype", parameterModel.Extension.DataSource.Memory.SourceType);
-            //    writer.WriteAttributeString("sarray", parameterModel.Extension.DataSource.Memory.SourceArray);
-
-            //    // Đóng thẻ memory
-            //    writer.WriteEndElement();
-
-            //    // Thẻ fins tự đóng
-            //    writer.WriteElementString("fins", string.Empty);
-
-            //    // Đóng thẻ datasource
-            //    writer.WriteEndElement();
-
-            //    // Đóng thẻ extension
-            //    writer.WriteEndElement();
-
-            //    // Đóng thẻ parameter
-            //    writer.WriteEndElement();
-
-            //    // Đóng thẻ parameters
-            //    writer.WriteEndElement();
-
-            //    // Kết thúc tài liệu XML
-            //    writer.WriteEndDocument();
-
-            //}
-            //string xmlString = sb.ToString();
-            //Console.WriteLine(xmlString);
-
-            string filePath = "parameters.xml";
-            //File.WriteAllText(filePath, xmlString);
-
-            ConvertXmlToJson_Parameter(filePath, "parameters.json");
-            ConvertJsonToXml_Parameter("parameters.json", filePath);
-
-            //var json = XmlToJson(filePath);
+            switch (x_objResult.SheetName)
+            {
+                case PARAMETER.SHEET_NAME:
+                    ListParameterToXml(x_objResult.Models);
+                    break;
+                case TRACE.SHEET_NAME:
+                    ListTraceToXml(x_objResult.Models);
+                    break;
+                default:
+                    break;
+            }
+            return "";
         }
 
-        public static void ListTraceToXml()
+        public static void ListParameterToXml(List<Dictionary<string, string>> x_lstData)
         {
-            string xmlOutput;
-            // Khởi tạo đối tượng TraceRequest với các giá trị mẫu
-            TraceRequest traceRequest = new TraceRequest
-            {
-                TraceID = "001",
-                TraceName = "Sample Trace",
-                Description = "This is a sample trace request.",
-                Triggers = new Triggers
-                {
-                    StartOn = "",
-                    StopOn = "2024-10-04T12:00:00"
-                },
-                Parameters = new Parameters
-                {
-                    ParameterList = new List<Parameter>
-                {
-                    new Parameter { ParameterID = "param1" },
-            
-                }
-                }
-            };
-            XmlWriterSettings settings = new XmlWriterSettings
+            StringBuilder strBuilder = new StringBuilder();
+
+            // Create XmlWriterSettings with OmitXmlDeclaration = true
+            XmlWriterSettings objXmlSettings = new XmlWriterSettings
             {
                 Indent = true,              // Format the XML with indentation
                 OmitXmlDeclaration = true,
             };
 
-            // Serialize đối tượng thành XML bằng XmlWriter
-            using (StringWriter stringWriter = new StringWriter())
+            using (XmlWriter writer = XmlWriter.Create(strBuilder, objXmlSettings))
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, settings))
+                // Bắt đầu tài liệu XML
+                writer.WriteStartDocument();
+                writer.WriteStartElement("ns1", "parameters", "urn:ConfigFileSchema");
+
+                foreach (Dictionary<string, string> objPara in x_lstData)
                 {
-                    // Bắt đầu viết tài liệu XML
-                    xmlWriter.WriteStartDocument();
-                    xmlWriter.WriteStartElement("ns1", "tracerequests", "urn:ConfigFileSchema");
+                    // Tạo thẻ parameter với các thuộc tính
+                    writer.WriteStartElement("parameter");
+                    writer.WriteAttributeString("paramid", objPara[DEFINE.ParameterID]);
+                    writer.WriteAttributeString("paramname", objPara[DEFINE.ParameterName]);
+                    writer.WriteAttributeString("locator", objPara[DEFINE.Locator]);
+                    writer.WriteAttributeString("unit", objPara[DEFINE.Unit]);
+                    writer.WriteAttributeString("type", objPara[DEFINE.Type]);
+                    writer.WriteAttributeString("array", objPara[DEFINE.Array]);
+                    writer.WriteAttributeString("function", objPara[DEFINE.Function]);
+                    writer.WriteAttributeString("arg", objPara[DEFINE.Arg]);
+
+                    // Bắt đầu phần extension
+                    writer.WriteStartElement("extension");
+
+                    // Bắt đầu phần datasource với thuộc tính sourcetype
+                    writer.WriteStartElement("datasource");
+                    writer.WriteAttributeString("sourcetype", objPara[DEFINE.Sourcetype]);
+
+                    // Bắt đầu phần memory với các thuộc tính
+                    writer.WriteStartElement("memory");
+                    writer.WriteAttributeString("memname", objPara[DEFINE.MemoryName]);
+                    writer.WriteAttributeString("offset", objPara[DEFINE.Offset]);
+                    writer.WriteAttributeString("stype", objPara[DEFINE.SourceType]);
+                    writer.WriteAttributeString("sarray", objPara[DEFINE.Array]);
+
+                    // Đóng thẻ memory
+                    writer.WriteEndElement();
+
+                    // Thẻ fins tự đóng
+                    writer.WriteElementString("fins", string.Empty);
+
+                    // Đóng thẻ datasource
+                    writer.WriteEndElement();
+
+                    // Đóng thẻ extension
+                    writer.WriteEndElement();
+
+                    // Đóng thẻ parameter
+                    writer.WriteEndElement();
+                }
+
+                // Đóng thẻ parameters
+                writer.WriteEndElement();
+
+                // Kết thúc tài liệu XML
+                writer.WriteEndDocument();
+
+            }
+
+            string xmlString = strBuilder.ToString();
+
+            string filePath = "parameters.xml";
+            File.WriteAllText(filePath, xmlString);
+
+
+            ConvertXmlToJson_Parameter(filePath, "parameters.json");
+            ConvertJsonToXml_Parameter("parameters.json", filePath);
+        }
+
+        public static void ListTraceToXml(List<Dictionary<string, string>> x_lstData)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+
+            // Create XmlWriterSettings with OmitXmlDeclaration = true
+            XmlWriterSettings objXmlSettings = new XmlWriterSettings
+            {
+                Indent = true,              // Format the XML with indentation
+                OmitXmlDeclaration = true,
+            };
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(strBuilder, objXmlSettings))
+            {
+                // Bắt đầu viết tài liệu XML
+                xmlWriter.WriteStartDocument();
+                xmlWriter.WriteStartElement("ns1", "tracerequests", "urn:ConfigFileSchema");
+
+                foreach (Dictionary<string, string> objPara in x_lstData)
+                {
 
                     // Bắt đầu phần tử tracerequest
                     xmlWriter.WriteStartElement("tracerequest");
@@ -174,14 +175,14 @@ namespace CommonCmpLib
 
                     // Viết phần tử parameters
                     xmlWriter.WriteStartElement("parameters");
-                   
+
                     foreach (var parameter in traceRequest.Parameters.ParameterList)
                     {
                         xmlWriter.WriteStartElement("parameter"); // Mở phần tử parameter
                         xmlWriter.WriteAttributeString("paramid", parameter.ParameterID);
                         xmlWriter.WriteEndElement(); // Kết thúc parameter
                     }
-                    
+
                     xmlWriter.WriteEndElement(); // Kết thúc parameters
 
                     // Kết thúc phần tử tracerequest
@@ -191,15 +192,8 @@ namespace CommonCmpLib
                     // Kết thúc tài liệu XML
                     xmlWriter.WriteEndDocument();
                 }
-                xmlOutput = stringWriter.ToString();
-
             }
-            // Chuyển đổi XML sang JSON
-            string jsonOutput = ConvertXmlToJson(xmlOutput);
-            //var valueSet = JsonConvert.DeserializeObject<TraceRequest>(traceRequest);
-            var jsonOutpu = JsonConvert.SerializeObject(traceRequest, Newtonsoft.Json.Formatting.Indented);
-            Console.WriteLine("JSON Output:");
-            Console.WriteLine(jsonOutput);
+
         }
 
         // Tạo một JsonConverter tùy chỉnh để thêm prefix '@' cho các thuộc tính

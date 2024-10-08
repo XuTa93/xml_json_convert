@@ -44,7 +44,7 @@ namespace CommonCmpLib_Test
         /// <summary>
         /// Checks if the selected file exists and proceeds with the conversion logic.
         /// </summary>
-        private void btn_Convert_Click(object objSender, EventArgs objEvt)
+        private void   btn_Convert_Click(object objSender, EventArgs objEvt)
         {
             // Declare variables at the beginning
             string strFilePath;

@@ -27,6 +27,7 @@ namespace CommonCmpLib
     public class ExcelProcessResult
     {
         public bool IsSuccess { get; internal set; }
+        public string SheetName { get; internal set; }
         public int TotalRow { get; internal set; }
         public List<string> HeadersError { get; internal set; }
         public List<string> CellError { get; internal set; }

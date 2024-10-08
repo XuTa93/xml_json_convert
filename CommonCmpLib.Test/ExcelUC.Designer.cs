@@ -118,9 +118,12 @@ namespace CommonCmpLib_Test
             // 
             // rtxt_Log
             // 
+            this.rtxt_Log.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.rtxt_Log.Location = new System.Drawing.Point(301, 130);
             this.rtxt_Log.Name = "rtxt_Log";
-            this.rtxt_Log.Size = new System.Drawing.Size(466, 323);
+            this.rtxt_Log.Size = new System.Drawing.Size(480, 339);
             this.rtxt_Log.TabIndex = 8;
             this.rtxt_Log.Text = "";
             // 
