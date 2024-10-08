@@ -1,14 +1,8 @@
-﻿using System;
+﻿using CommonCmpLib;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CommonCmpLib;
 
 namespace CommonCmpLib_Test
 {
@@ -64,7 +58,7 @@ namespace CommonCmpLib_Test
         }
 
         private void btn_XmlFolder_Click(object objSender, EventArgs objEvt)
-        {         
+        {
             using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
             {
                 folderBrowserDialog.Description = "Select a Folder";
@@ -98,15 +92,31 @@ namespace CommonCmpLib_Test
 
         private void btn_CreateTemplate_Click(object sender, EventArgs e)
         {
-           Common.ListTraceToXml();
-           TraceService.ReadFromExcel(m_strExcel_Path);
-           ParameterServices.ReadFromExcel(m_strExcel_Path);
-           EventService.ReadFromExcel(m_strExcel_Path);
-           DCPService.ReadFromExcel(m_strExcel_Path);
+            Common.ListTraceToXml();
+            //TraceService.ReadFromExcel(m_strExcel_Path);
+            //ParameterServices.ReadFromExcel(m_strExcel_Path);
+            //EventService.ReadFromExcel(m_strExcel_Path);
+            //DCPService.ReadFromExcel(m_strExcel_Path);
+            Dictionary<string, string> COLUMN_HEADERS = new Dictionary<string, string>
+        {
+            { "A1", "No."  },
+            { "B1", "MachineName" },
+            { "C1", "PlanID" },
+            { "D1", "PlanName" },
+            { "E1", "Description" },
+            { "F1", "StartEvent" },
+            { "G1", "EndEvent" },
+            { "H1", "TimeRequest" },
+            { "I2", "ParameterID" }
+        };
+            string[] Mandatoryfields = new string[]{ "No.", "MachineName", "PlanID", "PlanName", "ParameterID" };
+
+            ExcelDataService excelDataService = new ExcelDataService(COLUMN_HEADERS, "DataCollectionPlan", 2, 9, Mandatoryfields);
+            excelDataService.ReadFromExcel(m_strExcel_Path);
         }
 
         private void GetSheetNames()
-        {       
+        {
             m_lstSheetName = ExcelComonServices.GetSheetNames(m_strExcel_Path);
             if (m_lstSheetName == null)
             {

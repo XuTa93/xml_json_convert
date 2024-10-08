@@ -24,4 +24,13 @@ namespace CommonCmpLib
             Models = new List<T>();
         }
     }
+    public class ExcelProcessResult
+    {
+        public bool IsSuccess { get; internal set; }
+        public int TotalRow { get; internal set; }
+        public List<string> HeadersError { get; internal set; }
+        public List<string> CellError { get; internal set; }
+        public List< Dictionary<string, string> > Models { get; set; }
+        public string Message { get; internal set; } = string.Empty;
+    }
 }

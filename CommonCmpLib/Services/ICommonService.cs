@@ -1,23 +1,346 @@
 ﻿using ClosedXML.Excel;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace CommonCmpLib
 {
-    public interface IExcelDataService<T>
+    public class ExcelDataService
     {
-        Dictionary<string, string> Colunms { get; set; }
-        // Methods that need to be implemented using the generic type T
-        ExcelProcessResult<T> ReadFromExcel(string x_strFilePath);
-        ExcelProcessResult<T> CreateErrorResult(string x_strMessage);
-        void ValidateHeaders(IXLWorksheet x_objWorksheet, List<string> x_lstHeaderErr);
-        List<Dictionary<string, T>> ExtractDataFromWorksheet(IXLWorksheet x_objWorksheet);
-        List<string> ValidateMandatoryFieldsAndFillCell(List<Dictionary<string, T>> x_lstPlanList);
-        void CopyFromPreviousRow(List<Dictionary<string, T>> x_lstPlanList, int x_nIndex);
-        void CheckMandatoryFields(Dictionary<string, T> x_objModel, ref string strRowErr, ref bool bCheckCellErr);
-        U GetCellValue<U>(IXLWorksheet x_objWorksheet, int nRow, int nCol);
-    }
-    public class IExcelDataService : IExcelDataService<T>
-    {
+        #region Fields
+        private Dictionary<string, string> m_objColunms;
+        private int m_nRowStart;
+        private int m_nRowHeader;
+        private int m_nColunmKey;
+        private string m_strSheetName;
+        private ExcelProcessResult m_objProcessResult;
+        private string[] m_arrMandatoryFields;
 
+        #endregion Fields
+
+        #region Properties
+        public Dictionary<string, string> Colunms
+        {
+            get
+            {
+                return m_objColunms;
+            }
+        }
+        public int RowStart { get => m_nRowStart; }
+        public int RowHeader
+        {
+            get
+            {
+                return m_nRowHeader;
+            }
+        }
+        public int ColunmKey
+        {
+            get
+            {
+                return m_nColunmKey;
+            }
+        }
+        public string SheetName
+        {
+            get
+            {
+                return m_strSheetName;
+            }
+        }
+        public string[] MandatoryFields
+        {
+            get
+            {
+                return m_arrMandatoryFields;
+            }
+        }
+        public ExcelProcessResult ProcessResult
+        {
+            get
+            {
+                return m_objProcessResult;
+            }
+        }
+        #endregion Properties
+
+        #region Contructors
+        /// <summary>
+        /// Contructors
+        /// </summary>
+        public ExcelDataService(Dictionary<string, string> x_objColunm, string x_strSheetName, int x_nRowHeader, int x_nColunmKey, string[] x_lstMandatoryFields)
+        {
+            m_objColunms = x_objColunm;
+            m_nRowHeader = x_nRowHeader;
+            m_nRowStart = m_nRowHeader + 1;
+            m_strSheetName = x_strSheetName;
+            m_nColunmKey = x_nColunmKey;
+            m_arrMandatoryFields = x_lstMandatoryFields;
+        }
+
+        public ExcelDataService()
+        {
+            m_objColunms = x_objColunm;
+            m_nRowHeader = x_nRowHeader;
+            m_nRowStart = m_nRowHeader + 1;
+            m_strSheetName = x_strSheetName;
+            m_nColunmKey = x_nColunmKey;
+            m_arrMandatoryFields = x_lstMandatoryFields;
+        }
+
+        #endregion Contructors
+
+        /// <summary>
+        /// Process data collection plan from an Excel file.
+        /// </summary>
+        public ExcelProcessResult ReadFromExcel(string x_strFilePath)
+        {
+            // Initialize variables for processing
+            List<Dictionary<string, string>> lstData;
+            List<string> lstHeaderErr;
+            List<string> lstCellErr;
+            IXLWorksheet objWorksheet;
+            bool bIsSuccess;
+            StringBuilder strMessage;
+
+            // Initialize lists for storing errors and plan data
+            lstHeaderErr = new List<string>();
+            lstCellErr = new List<string>();
+            lstData = new List<Dictionary<string, string>>();
+            m_objProcessResult = new ExcelProcessResult();
+
+            try
+            {
+                // Open the Excel file stream
+                using (FileStream objStream = new FileStream(x_strFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    // Load the Excel workbook
+                    using (XLWorkbook workbook = new XLWorkbook(objStream))
+                    {
+                        objWorksheet = workbook.Worksheet(m_strSheetName);
+
+                        // Validate headers
+                        ValidateHeaders(objWorksheet, lstHeaderErr);
+
+                        // Extract data from worksheet
+                        ExtractDataFromWorksheet(objWorksheet, lstData);
+                    }
+                }
+
+                // Fill in missing mandatory fields by copying from the previous row
+                ValidateMandatoryFieldsAndFillCell(lstData, lstCellErr);
+
+                // Check overall success status
+                bIsSuccess = (lstHeaderErr.Count == 0) && (lstCellErr.Count == 0);
+
+                // Prepare the result object with the processed data and any errors
+                m_objProcessResult.IsSuccess = bIsSuccess;
+                m_objProcessResult.TotalRow = lstData.Count;
+                m_objProcessResult.HeadersError = lstHeaderErr;
+                m_objProcessResult.CellError = lstCellErr;
+                m_objProcessResult.Models = lstData;
+
+                // Prepare the message
+                strMessage = new StringBuilder();
+                strMessage.Append(m_strSheetName);
+                if (bIsSuccess == true)
+                {
+                    strMessage.AppendLine(" Processing completed successfully.");
+                }
+                else
+                {
+                    strMessage.Append(" : There were");
+                    strMessage.Append($" {(lstHeaderErr.Count > 0 ? $"{lstHeaderErr.Count} Header error and" : "")}");
+                    strMessage.Append($" {(lstCellErr.Count > 0 ? $"{lstCellErr.Count} Rows error and" : "")}");
+                    strMessage.AppendLine($" Row errors and during processing.");
+
+                }
+
+
+                if (lstHeaderErr.Any())
+                {
+                    strMessage.AppendLine($"\t- {m_strSheetName} Header Error:");
+                    foreach (string headerErr in lstHeaderErr)
+                    {
+                        strMessage.AppendLine($"\t\t+ {headerErr}");
+                    }
+                }
+
+                if (lstCellErr.Any())
+                {
+                    strMessage.AppendLine($"\t- {m_strSheetName} Cell Error:");
+                    foreach (string cellErr in lstCellErr)
+                    {
+                        strMessage.AppendLine($"\t\t+ {cellErr}");
+                    }
+                }
+
+                m_objProcessResult.Message = strMessage.ToString().TrimEnd(); // Remove trailing whitespace
+
+                return m_objProcessResult;
+            }
+            catch (IOException objEx)
+            {
+                m_objProcessResult.IsSuccess = false;
+                m_objProcessResult.Message = $"{m_strSheetName} Sheet Error reading the Excel file: {objEx.Message}";
+                return m_objProcessResult;
+            }
+            catch (Exception objEx)
+            {
+                m_objProcessResult.IsSuccess = false;
+                m_objProcessResult.Message = $"{m_strSheetName} Sheet An error occurred: {objEx.Message}";
+                return m_objProcessResult;
+            }
+        }
+
+        /// <summary>
+        /// Validate Headers in the specified worksheet against predefined column headers.
+        /// </summary>
+        public void ValidateHeaders(IXLWorksheet x_objWorksheet, List<string> x_lstHeaderErr)
+        {
+
+            // Iterate through each defined header in COLUMN_HEADERS
+            foreach (KeyValuePair<string, string> header in Colunms)
+            {
+                // Retrieve the header name from the worksheet
+                string strHeaderName = x_objWorksheet.Cell(header.Key).GetValue<string>();
+
+                // Compare the retrieved header name with the expected value
+                if (strHeaderName != header.Value)
+                {
+                    // If they do not match, log the error
+                    x_lstHeaderErr.Add($"{header.Key} : Current {strHeaderName}  is not Equal {header.Value}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Extract data from the specified worksheet.
+        /// </summary>
+        public void ExtractDataFromWorksheet(IXLWorksheet x_objWorksheet, List<Dictionary<string, string>> x_lstData)
+        {
+            // Determine the starting row, which is the first row after the header
+            int nRow = RowHeader + 1;
+
+            // Loop through the rows until an empty cell is found in the 9th column
+            while (x_objWorksheet.Cell(nRow, ColunmKey).IsEmpty() == false)
+            {
+                // Create a new dictionary to store values of the current row
+                Dictionary<string, string> objRowData = new Dictionary<string, string>();
+
+                // Retrieve and store the value of each cell in the current row, using the header as the key
+                foreach (KeyValuePair<string, string> objHeader in Colunms)
+                {
+                    objRowData[objHeader.Value] = GetCellValue<string>(x_objWorksheet, nRow, objHeader.Key);
+                }
+
+                // Add the row data to the list
+                x_lstData.Add(objRowData);
+
+                // Move to the next row
+                nRow++;
+            }
+        }
+
+        /// <summary>
+        /// Validates mandatory fields in the provided data list and fills in any missing values from the previous row.
+        /// </summary>
+        public void ValidateMandatoryFieldsAndFillCell(List<Dictionary<string, string>> x_lstData, List<string> x_lstCellErr)
+        {
+            string strCellErr;
+            // Loop through each plan entry
+            for (int i = 0; i < x_lstData.Count; i++)
+            {
+                // Check if the current row is the first or has a filled 'No' field
+                if ((i == 0) || (string.IsNullOrEmpty(x_lstData[i]["No."]) == false))
+                {
+                    // Check mandatory fields for the current row
+                    strCellErr = CheckMandatoryField(x_lstData[i], i);
+                    if (string.IsNullOrEmpty(strCellErr) == false)
+                    {
+                        x_lstCellErr.Add(strCellErr);
+                    }
+                }
+                else
+                {
+                    // Copy data from the previous row if the 'No' field is empty
+                    CopyFromPreviousRow(x_lstData, i);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if mandatory fields in the provided row data are present and not empty.
+        /// </summary>
+        /// <returns>A string containing an error message if any mandatory field is missing; otherwise, an empty string.</returns>
+        public string CheckMandatoryField(Dictionary<string, string> x_objRowData, int x_nRow)
+        {
+            // Initialize a list to store any errors found during validation
+            string srtlstCellErr = string.Empty;
+
+            // Loop through the mandatory fields provided in x_arrMandatoryFields
+            foreach (string strField in MandatoryFields)
+            {
+                // Check if the mandatory field exists in the dictionary and if it's empty or null
+                if ((x_objRowData.ContainsKey(strField) == false) || (string.IsNullOrEmpty(x_objRowData[strField])))
+                {
+                    // Add an error message to lstCellErr indicating the missing field for the current row
+                    srtlstCellErr = ($"Row {x_nRow + RowStart} : Missing mandatory field {strField}");
+                }
+            }
+
+            // Return the list of cell errors for this row
+            return srtlstCellErr;
+        }
+
+        /// <summary>
+        /// If a field is empty or null in the current row, it is filled with the value from the previous row.
+        /// </summary>
+        public void CopyFromPreviousRow(List<Dictionary<string, string>> x_lstData, int x_nIndex)
+        {
+            // Retrieve the previous row's data for comparison
+            Dictionary<string, string> objPreviousRow = x_lstData[x_nIndex - 1];
+
+            // Retrieve the current row's data
+            Dictionary<string, string> objCurrentRow = x_lstData[x_nIndex];
+
+            // Iterate over each field in the current row
+            foreach (KeyValuePair<string, string> objField in objPreviousRow)
+            {
+                if (objField.Key != "ParameterID")
+                {
+                    objCurrentRow[objField.Key] = objPreviousRow[objField.Key];
+                }
+            }
+
+            // After filling, replace the current row in the plan list with the updated row
+            x_lstData[x_nIndex] = objCurrentRow;
+        }
+
+        /// <summary>
+        /// Get Colunm by Cell
+        /// </summary>
+        public string GetColunm(string x_strInput)
+        {
+            return new string(x_strInput.Where(c => char.IsDigit(c) == false).ToArray());
+        }
+
+        /// <summary>
+        /// Generic method to get the value from a cell.
+        /// </summary>
+        public T GetCellValue<T>(IXLWorksheet x_objWorksheet, int x_nRow, string x_strColumn)
+        {
+            try
+            {
+                return x_objWorksheet.Cell(x_nRow, GetColunm(x_strColumn)).GetValue<T>();
+            }
+            catch (Exception objEx)
+            {
+                string strWorksheetName = x_objWorksheet.Name;
+                throw new ApplicationException($"Failed to get cell value at ({x_nRow}, {x_strColumn}) in Worksheet '{strWorksheetName}': {objEx.Message}", objEx);
+            }
+        }
     }
 }

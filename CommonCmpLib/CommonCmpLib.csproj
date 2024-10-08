@@ -119,6 +119,7 @@
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\ExcelServices\ExcelComonServices.cs" />
     <Compile Include="Services\ICommonService.cs" />
+    <Compile Include="Services\IExcelDataService.cs" />
     <Compile Include="Services\ParameterServices.cs" />
     <Compile Include="JsonToXmlModel\EventRequestModel.cs" />
     <Compile Include="Model\Parameter\ExlParameterModel.cs" />
