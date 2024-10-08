@@ -24,7 +24,7 @@ namespace CommonCmpLib
 
         public string TimeRequest { get; set; }
 
-        public string ParameterID { get; set; }
+        public List<string> ParametersID { get; set; }
     }
 
 }

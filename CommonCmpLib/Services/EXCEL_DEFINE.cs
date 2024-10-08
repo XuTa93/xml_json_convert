@@ -15,6 +15,7 @@ namespace CommonCmpLib
     }
     public static class DEFINE
     {
+        // Parameter
         public const string No = "No.";
         public const string ParameterID = "ParameterID";
         public const string ParameterName = "ParameterName";
@@ -30,6 +31,22 @@ namespace CommonCmpLib
         public const string SourceType = "SourceType";
         public const string SourceArray = "SourceArray";
         public const string Description = "Description";
+
+        // Trace
+        public const string TraceID = "TraceID";
+        public const string TraceName = "TraceName";
+        public const string StartOn = "StartOn";
+        public const string StopOn = "StopOn";
+
+        //Event
+
+        //DataCollectionPlan
+        public const string MachineName = "MachineName";
+        public const string PlanID = "PlanID";
+        public const string PlanName = "PlanName";
+        public const string StartEvent = "StartEvent";
+        public const string EndEvent = "EndEvent";
+        public const string TimeRequest = "TimeRequest";
     }
     public static class PARAMETER
     {   
@@ -66,16 +83,16 @@ namespace CommonCmpLib
         public const string COLUNM_KEY = "G";
         public static readonly string[] MANDATORY_FIELDS = new string[] 
         {
-            DEFINE.No, "TraceID", "TraceName", "ParameterID" 
+            DEFINE.No, DEFINE.TraceID, DEFINE.TraceName, DEFINE.ParameterID 
         };
         public static readonly Dictionary<string, string> COLUNMS = new Dictionary<string, string>
         {
             { "A1", DEFINE.No },
-            { "B1", "TraceID" },
-            { "C1", "TraceName" },
+            { "B1", DEFINE.TraceID },
+            { "C1", DEFINE.TraceName },
             { "D1", DEFINE.Description },
-            { "E1", "StartOn" },
-            { "F1", "StopOn" },
+            { "E1", DEFINE.StartOn },
+            { "F1", DEFINE.StopOn },
             { "G1", DEFINE.ParameterID }
         };
     }
@@ -105,13 +122,13 @@ namespace CommonCmpLib
         public static readonly Dictionary<string, string> COLUNMS = new Dictionary<string, string>
         {
             { "A1", DEFINE.No },
-            { "B1", "MachineName" },
-            { "C1", "PlanID" },
-            { "D1", "PlanName" },
+            { "B1", DEFINE.MachineName },
+            { "C1", DEFINE.PlanID },
+            { "D1", DEFINE.PlanName },
             { "E1", DEFINE.Description },
-            { "F1", "StartEvent" },
-            { "G1", "EndEvent" },
-            { "H1", "TimeRequest" },
+            { "F1", DEFINE.StartEvent },
+            { "G1", DEFINE.EndEvent },
+            { "H1", DEFINE.TimeRequest },
             { "I2", DEFINE.ParameterID },
         };
     }

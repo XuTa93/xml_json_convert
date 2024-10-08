@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -52,18 +53,30 @@ namespace CommonCmpLib
             switch (x_objResult.SheetName)
             {
                 case PARAMETER.SHEET_NAME:
-                    ListParameterToXml(x_objResult.Models);
+                    CreateParameterToXml(x_objResult.Models);
                     break;
                 case TRACE.SHEET_NAME:
-                    ListTraceToXml(x_objResult.Models);
+                    CreateTraceToXml(x_objResult.Models);
                     break;
+
+                case EVENT.SHEET_NAME:
+                    CreateTraceToXml(x_objResult.Models);
+                    break;
+
+                case DCP.SHEET_NAME:
+                    CreateDCPXml(x_objResult.Models);
+                    break;
+
                 default:
                     break;
             }
             return "";
         }
 
-        public static void ListParameterToXml(List<Dictionary<string, string>> x_lstData)
+        /// <summary>
+        /// Converts a list of parameters stored in dictionaries into an XML format and saves it to a file.
+        /// </summary>
+        public static void CreateParameterToXml(List<Dictionary<string, string>> x_lstData)
         {
             StringBuilder strBuilder = new StringBuilder();
 
@@ -71,115 +84,153 @@ namespace CommonCmpLib
             XmlWriterSettings objXmlSettings = new XmlWriterSettings
             {
                 Indent = true,              // Format the XML with indentation
-                OmitXmlDeclaration = true,
+                OmitXmlDeclaration = true,  // Omit the XML declaration
             };
 
-            using (XmlWriter writer = XmlWriter.Create(strBuilder, objXmlSettings))
+            try
             {
-                // Bắt đầu tài liệu XML
-                writer.WriteStartDocument();
-                writer.WriteStartElement("ns1", "parameters", "urn:ConfigFileSchema");
-
-                foreach (Dictionary<string, string> objPara in x_lstData)
+                using (XmlWriter writer = XmlWriter.Create(strBuilder, objXmlSettings))
                 {
-                    // Tạo thẻ parameter với các thuộc tính
-                    writer.WriteStartElement("parameter");
-                    writer.WriteAttributeString("paramid", objPara[DEFINE.ParameterID]);
-                    writer.WriteAttributeString("paramname", objPara[DEFINE.ParameterName]);
-                    writer.WriteAttributeString("locator", objPara[DEFINE.Locator]);
-                    writer.WriteAttributeString("unit", objPara[DEFINE.Unit]);
-                    writer.WriteAttributeString("type", objPara[DEFINE.Type]);
-                    writer.WriteAttributeString("array", objPara[DEFINE.Array]);
-                    writer.WriteAttributeString("function", objPara[DEFINE.Function]);
-                    writer.WriteAttributeString("arg", objPara[DEFINE.Arg]);
+                    // Start the XML document
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("ns1", "parameters", "urn:ConfigFileSchema");
 
-                    // Bắt đầu phần extension
-                    writer.WriteStartElement("extension");
+                    // Iterate over the list of parameter dictionaries
+                    foreach (Dictionary<string, string> objPara in x_lstData)
+                    {
+                        // Create parameter element with attributes, checking if the key exists
+                        writer.WriteStartElement("parameter");
+                        writer.WriteAttributeString("paramid", objPara.ContainsKey(DEFINE.ParameterID) ? objPara[DEFINE.ParameterID] : string.Empty);
+                        writer.WriteAttributeString("paramname", objPara.ContainsKey(DEFINE.ParameterName) ? objPara[DEFINE.ParameterName] : string.Empty);
+                        writer.WriteAttributeString("locator", objPara.ContainsKey(DEFINE.Locator) ? objPara[DEFINE.Locator] : string.Empty);
+                        writer.WriteAttributeString("unit", objPara.ContainsKey(DEFINE.Unit) ? objPara[DEFINE.Unit] : string.Empty);
+                        writer.WriteAttributeString("type", objPara.ContainsKey(DEFINE.Type) ? objPara[DEFINE.Type] : string.Empty);
+                        writer.WriteAttributeString("array", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
+                        writer.WriteAttributeString("function", objPara.ContainsKey(DEFINE.Function) ? objPara[DEFINE.Function] : string.Empty);
+                        writer.WriteAttributeString("arg", objPara.ContainsKey(DEFINE.Arg) ? objPara[DEFINE.Arg] : string.Empty);
 
-                    // Bắt đầu phần datasource với thuộc tính sourcetype
-                    writer.WriteStartElement("datasource");
-                    writer.WriteAttributeString("sourcetype", objPara[DEFINE.Sourcetype]);
+                        // Start the extension element
+                        writer.WriteStartElement("extension");
 
-                    // Bắt đầu phần memory với các thuộc tính
-                    writer.WriteStartElement("memory");
-                    writer.WriteAttributeString("memname", objPara[DEFINE.MemoryName]);
-                    writer.WriteAttributeString("offset", objPara[DEFINE.Offset]);
-                    writer.WriteAttributeString("stype", objPara[DEFINE.SourceType]);
-                    writer.WriteAttributeString("sarray", objPara[DEFINE.Array]);
+                        // Start the datasource element with sourcetype attribute
+                        writer.WriteStartElement("datasource");
+                        writer.WriteAttributeString("sourcetype", objPara.ContainsKey(DEFINE.Sourcetype) ? objPara[DEFINE.Sourcetype] : string.Empty);
 
-                    // Đóng thẻ memory
+                        // Start the memory element with attributes
+                        writer.WriteStartElement("memory");
+                        writer.WriteAttributeString("memname", objPara.ContainsKey(DEFINE.MemoryName) ? objPara[DEFINE.MemoryName] : string.Empty);
+                        writer.WriteAttributeString("offset", objPara.ContainsKey(DEFINE.Offset) ? objPara[DEFINE.Offset] : string.Empty);
+                        writer.WriteAttributeString("stype", objPara.ContainsKey(DEFINE.SourceType) ? objPara[DEFINE.SourceType] : string.Empty);
+                        writer.WriteAttributeString("sarray", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
+
+                        // Close the memory element
+                        writer.WriteEndElement();
+
+                        // Write the fins element (self-closing)
+                        writer.WriteElementString("fins", string.Empty);
+
+                        // Close the datasource element
+                        writer.WriteEndElement();
+
+                        // Close the extension element
+                        writer.WriteEndElement();
+
+                        // Close the parameter element
+                        writer.WriteEndElement();
+                    }
+
+                    // Close the parameters element
                     writer.WriteEndElement();
 
-                    // Thẻ fins tự đóng
-                    writer.WriteElementString("fins", string.Empty);
-
-                    // Đóng thẻ datasource
-                    writer.WriteEndElement();
-
-                    // Đóng thẻ extension
-                    writer.WriteEndElement();
-
-                    // Đóng thẻ parameter
-                    writer.WriteEndElement();
+                    // End the XML document
+                    writer.WriteEndDocument();
                 }
 
-                // Đóng thẻ parameters
-                writer.WriteEndElement();
+                // Convert the StringBuilder content to a string
+                string xmlString = strBuilder.ToString();
 
-                // Kết thúc tài liệu XML
-                writer.WriteEndDocument();
+                // Define the file path for the XML file and save it
+                string filePath = "parameters.xml";
+                File.WriteAllText(filePath, xmlString);
 
+                // Convert XML to JSON and back (assuming methods exist for this)
+                ConvertXmlToJson_Parameter(filePath, "parameters.json");
+                ConvertJsonToXml_Parameter("parameters.json", filePath);
             }
-
-            string xmlString = strBuilder.ToString();
-
-            string filePath = "parameters.xml";
-            File.WriteAllText(filePath, xmlString);
-
-
-            ConvertXmlToJson_Parameter(filePath, "parameters.json");
-            ConvertJsonToXml_Parameter("parameters.json", filePath);
+            catch (Exception ex)
+            {
+                // Catch any exceptions and output the error message
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
 
-        public static void ListTraceToXml(List<Dictionary<string, string>> x_lstData)
+        public static void CreateTraceToXml(List<Dictionary<string, string>> x_lstData)
         {
+            // Chuyển đổi dữ liệu Dictionary thành danh sách Trace với nhóm ParameterID
+            var lstTrace = x_lstData
+                .GroupBy(obj => new
+                {
+                    TraceID = obj.ContainsKey(DEFINE.TraceID) ? obj[DEFINE.TraceID] : null,
+                    TraceName = obj.ContainsKey(DEFINE.TraceName) ? obj[DEFINE.TraceName] : null,
+                    Description = obj[DEFINE.Description],
+                    StartOn = obj[DEFINE.StartOn],
+                    StopOn = obj[DEFINE.StopOn]
+                })
+                .Select(objTrace => new ExlTraceRequestModel
+                {
+                    TraceID = objTrace.Key.TraceID,
+                    TraceName = objTrace.Key.TraceName,
+                    Description = objTrace.Key.Description,
+                    StartOn = objTrace.Key.StartOn,
+                    StopOn = objTrace.Key.StopOn,
+                    ParametersID = objTrace.Select(lstPar => lstPar[DEFINE.ParameterID]).ToList() // Nhóm tất cả ParameterID lại
+        }).ToList();
+
             StringBuilder strBuilder = new StringBuilder();
 
             // Create XmlWriterSettings with OmitXmlDeclaration = true
             XmlWriterSettings objXmlSettings = new XmlWriterSettings
             {
                 Indent = true,              // Format the XML with indentation
-                OmitXmlDeclaration = true,
+                OmitXmlDeclaration = false,
+                Encoding = Encoding.UTF8,
             };
 
+            // Create the XML file with UTF-8 encoding
             using (XmlWriter xmlWriter = XmlWriter.Create(strBuilder, objXmlSettings))
             {
                 // Bắt đầu viết tài liệu XML
                 xmlWriter.WriteStartDocument();
                 xmlWriter.WriteStartElement("ns1", "tracerequests", "urn:ConfigFileSchema");
 
-                foreach (Dictionary<string, string> objPara in x_lstData)
+                foreach (ExlTraceRequestModel objTrace in lstTrace)
                 {
-
                     // Bắt đầu phần tử tracerequest
                     xmlWriter.WriteStartElement("tracerequest");
-                    xmlWriter.WriteAttributeString("traceid", traceRequest.TraceID);
-                    xmlWriter.WriteAttributeString("tracename", traceRequest.TraceName);
-                    xmlWriter.WriteAttributeString("description", traceRequest.Description);
+
+                    xmlWriter.WriteAttributeString("traceid", objTrace.TraceID);
+                    xmlWriter.WriteAttributeString("tracename", objTrace.TraceName);
+                    xmlWriter.WriteAttributeString("description", objTrace.Description);
 
                     // Viết phần tử triggers
                     xmlWriter.WriteStartElement("triggers");
-                    xmlWriter.WriteElementString("starton", traceRequest.Triggers.StartOn);
-                    xmlWriter.WriteElementString("stopon", traceRequest.Triggers.StopOn);
+                    xmlWriter.WriteElementString("starton", objTrace.StartOn);
+                    xmlWriter.WriteElementString("stopon", objTrace.StopOn);
                     xmlWriter.WriteEndElement(); // Kết thúc triggers
 
                     // Viết phần tử parameters
                     xmlWriter.WriteStartElement("parameters");
 
-                    foreach (var parameter in traceRequest.Parameters.ParameterList)
+                    //for (int i = 0; i < objTrace.ParametersID.Count; i++)
+                    //{
+                    //    xmlWriter.WriteStartElement("parameter"); // Mở phần tử parameter
+                    //    xmlWriter.WriteAttributeString("paramid", objTrace.ParametersID[i]);
+                    //    xmlWriter.WriteEndElement(); // Kết thúc parameter
+                    //}
+                    foreach (string strPara in objTrace.ParametersID)
                     {
                         xmlWriter.WriteStartElement("parameter"); // Mở phần tử parameter
-                        xmlWriter.WriteAttributeString("paramid", parameter.ParameterID);
+                        xmlWriter.WriteAttributeString("paramid", strPara);
                         xmlWriter.WriteEndElement(); // Kết thúc parameter
                     }
 
@@ -187,13 +238,176 @@ namespace CommonCmpLib
 
                     // Kết thúc phần tử tracerequest
                     xmlWriter.WriteEndElement();
-
-                    xmlWriter.WriteEndElement();
-                    // Kết thúc tài liệu XML
-                    xmlWriter.WriteEndDocument();
                 }
+
+                // Kết thúc phần tử tracerequests
+                xmlWriter.WriteEndElement();
+
+                // Kết thúc tài liệu XML
+                xmlWriter.WriteEndDocument();
             }
 
+            // Convert the StringBuilder content to a string
+            string xmlString = strBuilder.ToString();
+
+            // Define the file path for the XML file and save it
+            string filePath = "parameters.xml";
+            File.WriteAllText(filePath, xmlString);
+
+            // Convert XML to JSON and back (assuming methods exist for this)
+            ConvertXmlToJson_Parameter(filePath, "traces.json");
+            ConvertJsonToXml_Parameter("traces.json", filePath);
+        }
+
+        public static void CreateDCPXml(List<Dictionary<string, string>> x_lstData)
+        {
+            string xmlString;
+            List<ExlDCPModel> lstData = ConvertToDCPModelList(x_lstData);
+            // StringBuilder to hold the XML content
+            StringBuilder strBuilder;
+
+            // Create XmlWriterSettings with indentation and omit XML declaration
+            XmlWriterSettings objXmlSettings = new XmlWriterSettings
+            {
+                Indent = true,              // Format the XML with indentation
+                OmitXmlDeclaration = true, // Include XML declaration
+            };
+
+            foreach (var objDCP in lstData)
+            {
+                // Define the file path for the XML file
+                string str_filePath = $"{objDCP.PlanName}.xml";
+                strBuilder = new StringBuilder();
+                using (XmlWriter xmlWriter = XmlWriter.Create(strBuilder, objXmlSettings))
+                {
+                    // Start writing XML document
+                    xmlWriter.WriteStartDocument();
+                    xmlWriter.WriteStartElement("DCPTables", "urn:ConfigFileSchema");
+
+                    // Create DCPTable element
+                    xmlWriter.WriteStartElement("DCPTable");
+
+                    xmlWriter.WriteStartElement("Consumer");
+                    xmlWriter.WriteEndElement(); // End Consumer
+
+                    xmlWriter.WriteElementString("Macname", objDCP.MachineName); // Macname element with empty value
+
+                    // Create DataCollectionPlan element with attributes
+                    xmlWriter.WriteStartElement("DataCollectionPlan");
+                    xmlWriter.WriteAttributeString("id", objDCP.PlanID); // Empty id attribute
+                    xmlWriter.WriteAttributeString("name", objDCP.PlanName); // Empty name attribute
+                    xmlWriter.WriteAttributeString("Description", objDCP.Description); // Empty Description attribute
+                    xmlWriter.WriteAttributeString("monitorIntervalInSeconds", ""); // Empty monitorIntervalInSeconds attribute
+
+                    // StartEvent element
+                    xmlWriter.WriteStartElement("StartEvent");
+                    xmlWriter.WriteStartElement("EventRequests");
+                    xmlWriter.WriteStartElement("EventRequest");
+                    xmlWriter.WriteAttributeString("eventId", objDCP.StartEvent); // Empty eventId attribute
+                    xmlWriter.WriteEndElement(); // End EventRequest
+                    xmlWriter.WriteStartElement("Extension");
+                    xmlWriter.WriteEndElement(); // End Extension
+                    xmlWriter.WriteEndElement(); // End EventRequests
+                    xmlWriter.WriteStartElement("ParameterRequests");
+                    xmlWriter.WriteEndElement(); // End ParameterRequests
+                    xmlWriter.WriteEndElement(); // End StartEvent
+
+                    // EndEvent element
+                    xmlWriter.WriteStartElement("EndEvent");
+                    xmlWriter.WriteStartElement("EventRequests");
+                    xmlWriter.WriteStartElement("EventRequest");
+                    xmlWriter.WriteAttributeString("eventId", objDCP.EndEvent); // Empty eventId attribute
+                    xmlWriter.WriteEndElement(); // End EventRequest
+                    xmlWriter.WriteStartElement("Extension");
+                    xmlWriter.WriteEndElement(); // End Extension
+                    xmlWriter.WriteEndElement(); // End EventRequests
+
+                    xmlWriter.WriteStartElement("ParameterRequests");
+                    xmlWriter.WriteEndElement(); // End ParameterRequests
+
+                    xmlWriter.WriteStartElement("TimeRequests");
+                    xmlWriter.WriteStartElement("TimeRequest");
+                    xmlWriter.WriteEndElement(); // End TimeRequest
+                    xmlWriter.WriteEndElement(); // End TimeRequests
+
+                    xmlWriter.WriteEndElement(); // End EndEvent
+
+                    // Contents element
+                    xmlWriter.WriteStartElement("Contents");
+                    xmlWriter.WriteStartElement("EventRequests");
+                    xmlWriter.WriteEndElement(); // End EventRequests
+                    xmlWriter.WriteStartElement("TraceRequests");
+                    xmlWriter.WriteEndElement(); // End TraceRequests
+                    xmlWriter.WriteStartElement("ParameterRequests");
+                    //xmlWriter.WriteStartElement("ParameterRequest");
+
+                    foreach (string strPara in objDCP.ParametersID)
+                    {
+                        xmlWriter.WriteStartElement("ParameterRequest"); // Mở phần tử parameter
+                        xmlWriter.WriteAttributeString("parameterName", strPara);
+                        xmlWriter.WriteEndElement(); // Kết thúc parameter
+                    }
+                    //xmlWriter.WriteAttributeString("parameterName", objDCP.ParametersID); // Empty parameterName attribute
+                    
+                    //xmlWriter.WriteEndElement(); // End ParameterRequest
+                    xmlWriter.WriteEndElement(); // End ParameterRequests
+                    xmlWriter.WriteEndElement(); // End Contents
+
+                    xmlWriter.WriteEndElement(); // End DataCollectionPlan
+                    xmlWriter.WriteEndElement(); // End DCPTable
+                    xmlWriter.WriteEndElement(); // End DCPTables
+
+                    // End XML document
+                    xmlWriter.WriteEndDocument();
+                    
+                }
+                xmlString = strBuilder.ToString();
+                // Convert the StringBuilder content to a string
+                using (FileStream fs = new FileStream(str_filePath, FileMode.Create, FileAccess.Write))
+                using (StreamWriter sw = new StreamWriter(fs, Encoding.Default))
+                {
+                    sw.WriteLine("<?xml version=\"1.0\"?>"); // Manually write XML declaration
+                    sw.Write(xmlString);
+                }
+                // Đọc lại tệp XML sau khi lưu
+                string xmlContent = File.ReadAllText(str_filePath);
+                // Convert XML to JSON and back if needed
+                ConvertXmlToJson_Parameter(str_filePath, Path.ChangeExtension(str_filePath, ".json"));
+                ConvertJsonToXml_Parameter(Path.ChangeExtension(str_filePath, ".json"), str_filePath);
+            }
+
+        }
+
+        private static List<ExlDCPModel> ConvertToDCPModelList(List<Dictionary<string, string>> x_lstData)
+        {
+            // Group the data by PlanID and create the list of ExlDCPModel
+            var lstDCP = x_lstData
+                .GroupBy(obj => new
+                {
+                    No = obj.ContainsKey(DEFINE.No) ? obj[DEFINE.No] : null,
+                    MachineName = obj.ContainsKey(DEFINE.MachineName) ? obj[DEFINE.MachineName] : null,
+                    PlanID = obj.ContainsKey(DEFINE.PlanID) ? obj[DEFINE.PlanID] : null,
+                    PlanName = obj.ContainsKey(DEFINE.PlanName) ? obj[DEFINE.PlanName] : null,
+                    Description = obj.ContainsKey(DEFINE.Description) ? obj[DEFINE.Description] : null,
+                    StartEvent = obj.ContainsKey(DEFINE.StartEvent) ? obj[DEFINE.StartEvent] : null,
+                    EndEvent = obj.ContainsKey(DEFINE.EndEvent) ? obj[DEFINE.EndEvent] : null,
+                    TimeRequest = obj.ContainsKey(DEFINE.TimeRequest) ? obj[DEFINE.TimeRequest] : null
+                })
+                .Select(objGroup => new ExlDCPModel
+                {
+                    No = objGroup.Key.No,
+                    MachineName = objGroup.Key.MachineName,
+                    PlanID = objGroup.Key.PlanID,
+                    PlanName = objGroup.Key.PlanName,
+                    Description = objGroup.Key.Description,
+                    StartEvent = objGroup.Key.StartEvent,
+                    EndEvent = objGroup.Key.EndEvent,
+                    TimeRequest = objGroup.Key.TimeRequest,
+                    ParametersID = objGroup.Select(g => g[DEFINE.ParameterID]).ToList() // Group all ParameterID
+        })
+                .ToList();
+
+            return lstDCP;
         }
 
         // Tạo một JsonConverter tùy chỉnh để thêm prefix '@' cho các thuộc tính

@@ -74,7 +74,7 @@ namespace CommonCmpLib_Test
 
         private void btn_CreateTemplate_Click(object sender, EventArgs e)
         {
-            Common.ListTraceToXml();
+            //Common.ListTraceToXml();
             //TraceService.ReadFromExcel(m_strExcel_Path);
             //ParameterServices.ReadFromExcel(m_strExcel_Path);
             //EventService.ReadFromExcel(m_strExcel_Path);
@@ -86,19 +86,27 @@ namespace CommonCmpLib_Test
             rtxt_Log.Text += a.Message;
 
             var dcp = ExcelDataService.Create(ExcelSheetName.DataCollectionPlan);
-            var réultdcp = dcp.Read(m_strExcel_Path);
-            rtxt_Log.Text += réultdcp.Message;
+            var dcpresult = dcp.Read(m_strExcel_Path);
+            if (dcpresult.IsSuccess == true)
+            {
+                Common.DictionaryDataXml(dcpresult);
+            }
+            rtxt_Log.Text += dcpresult.Message;
 
             var excelData = ExcelDataService.Create(ExcelSheetName.Parameter);
             var objPara = excelData.Read(m_strExcel_Path);
             if (objPara.IsSuccess == true)
             {
-                Common.DictionaryDataXml(objPara);
+                //Common.DictionaryDataXml(objPara);
             }
             rtxt_Log.Text += objPara.Message;
 
             var trace = ExcelDataService.Create(ExcelSheetName.Trace);
             var traceresult = trace.Read(m_strExcel_Path);
+            if (traceresult.IsSuccess == true)
+            {
+                //Common.DictionaryDataXml(traceresult);
+            }
             rtxt_Log.Text += traceresult.Message;
             rtxt_Log.Text += "<--------------------------------------------------\r\n";
         }
