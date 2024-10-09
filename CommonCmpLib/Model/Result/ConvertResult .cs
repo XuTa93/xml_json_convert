@@ -1,6 +1,18 @@
-﻿namespace CommonCmpLib
+﻿//*****************************************************************************
+// 		    ：
+// 内容		：Collect and transform data Excel to Xml & Xml <=> Json
+// 		    ：
+// 作成者	：TangLx
+// 作成日	：2024/10/04
+// 		    ：
+// 修正履歴	：
+// 		    ：
+// 		    ：
+//*****************************************************************************
+
+namespace CommonCmpLib
 {
-    public class JsonXmlConvertResult
+    public class ConvertResult
     {
         /// <summary>
         /// Indicates whether the conversion was successful or not.

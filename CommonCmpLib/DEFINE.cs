@@ -1,8 +1,16 @@
-﻿using System;
+﻿//*****************************************************************************
+// 		    ：
+// 内容		：Collect and transform data Excel to Xml & Xml <=> Json
+// 		    ：
+// 作成者	：TangLx
+// 作成日	：2024/10/04
+// 		    ：
+// 修正履歴	：
+// 		    ：
+// 		    ：
+//*****************************************************************************
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonCmpLib
 {
@@ -15,6 +23,16 @@ namespace CommonCmpLib
     }
     public static class DEFINE
     {
+        //Common
+        public const string NS1_PROPERTY = "xmlns:ns1";
+        public const string NS1_NAMESPACE = "urn:ConfigFileSchema";
+
+        public const string NS1_PARAMETERS = "ns1:parameters";
+        public const string NS1_TRACEREQUESTS = "ns1:tracerequests";
+        public const string NS1_EVENTTRIGGERS = "ns1:eventtriggers";
+        public const string NS1_EVENTREQUESTS = "ns1:eventrequests";
+        public const string DCPTABLES = "DCPTables";
+
         // Parameter
         public const string No = "No.";
         public const string ParameterID = "ParameterID";
@@ -53,14 +71,15 @@ namespace CommonCmpLib
         public const string EndEvent = "EndEvent";
         public const string TimeRequest = "TimeRequest";
     }
+
     public static class PARAMETER
-    {   
+    {
         public const string SHEET_NAME = "Parameter";
         public const int ROW_HEADER = 1;
         public const string COLUNM_KEY = "B";
-        public static readonly string[] MANDATORY_FIELDS = new string[] 
-        { 
-            DEFINE.No, DEFINE.ParameterID, DEFINE.ParameterName, DEFINE.Locator, DEFINE.Type, DEFINE.Array, DEFINE.Sourcetype, DEFINE.MemoryName, DEFINE.Offset, DEFINE.SourceType, DEFINE.SourceArray 
+        public static readonly string[] MANDATORY_FIELDS = new string[]
+        {
+            DEFINE.No, DEFINE.ParameterID, DEFINE.ParameterName, DEFINE.Locator, DEFINE.Type, DEFINE.Array, DEFINE.Sourcetype, DEFINE.MemoryName, DEFINE.Offset, DEFINE.SourceType, DEFINE.SourceArray
         };
         public static readonly Dictionary<string, string> COLUNMS = new Dictionary<string, string>
         {
@@ -86,9 +105,9 @@ namespace CommonCmpLib
         public const string SHEET_NAME = "Trace";
         public const int ROW_HEADER = 1;
         public const string COLUNM_KEY = "G";
-        public static readonly string[] MANDATORY_FIELDS = new string[] 
+        public static readonly string[] MANDATORY_FIELDS = new string[]
         {
-            DEFINE.No, DEFINE.TraceID, DEFINE.TraceName, DEFINE.ParameterID 
+            DEFINE.No, DEFINE.TraceID, DEFINE.TraceName, DEFINE.ParameterID
         };
         public static readonly Dictionary<string, string> COLUNMS = new Dictionary<string, string>
         {
@@ -101,12 +120,13 @@ namespace CommonCmpLib
             { "G1", DEFINE.ParameterID }
         };
     }
+
     public static class EVENT
     {
         public const string SHEET_NAME = "Event";
         public const int ROW_HEADER = 2;
         public const string COLUNM_KEY = "E";
-        public static readonly string[] MANDATORY_FIELDS = new string[] { "No.", "EventID", "EventName", "AndOr", "ParameterID", "Equation", "Value"};
+        public static readonly string[] MANDATORY_FIELDS = new string[] { "No.", "EventID", "EventName", "AndOr", "ParameterID", "Equation", "Value" };
         public static readonly Dictionary<string, string> COLUNMS = new Dictionary<string, string>
         {
             { "A1", DEFINE.No },
@@ -118,6 +138,7 @@ namespace CommonCmpLib
             { "G2", DEFINE.Value },
         };
     }
+
     public static class DCP
     {
         public const string SHEET_NAME = "DataCollectionPlan";

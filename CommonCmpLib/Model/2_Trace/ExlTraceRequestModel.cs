@@ -1,4 +1,16 @@
-﻿using System.Collections.Generic;
+﻿//*****************************************************************************
+// 		    ：
+// 内容		：Collect and transform data Excel to Xml & Xml <=> Json
+// 		    ：
+// 作成者	：TangLx
+// 作成日	：2024/10/04
+// 		    ：
+// 修正履歴	：
+// 		    ：
+// 		    ：
+//*****************************************************************************
+
+using System.Collections.Generic;
 
 namespace CommonCmpLib
 {

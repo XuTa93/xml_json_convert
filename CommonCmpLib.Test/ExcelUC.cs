@@ -84,7 +84,7 @@ namespace CommonCmpLib_Test
             var objPara = excelData.Read(m_strExcel_Path);
             if (objPara.IsSuccess == true)
             {
-                Common.DictionaryDataXml(objPara,m_srtXmlFolder);
+                Common.CreateDataXml(objPara,m_srtXmlFolder);
             }
             rtxt_Log.Text += objPara.Message;
 
@@ -92,7 +92,7 @@ namespace CommonCmpLib_Test
             var evResutl = @event.Read(m_strExcel_Path);
             if (evResutl.IsSuccess == true)
             {
-                //Common.DictionaryDataXml(evResutl);
+                Common.CreateDataXml(evResutl, m_srtXmlFolder);
             }
             rtxt_Log.Text += evResutl.Message;
 
@@ -100,7 +100,7 @@ namespace CommonCmpLib_Test
             var traceresult = trace.Read(m_strExcel_Path);
             if (traceresult.IsSuccess == true)
             {
-                //Common.DictionaryDataXml(traceresult);
+                Common.CreateDataXml(traceresult, m_srtXmlFolder);
             }
             rtxt_Log.Text += traceresult.Message;
 
@@ -108,7 +108,7 @@ namespace CommonCmpLib_Test
             var dcpresult = dcp.Read(m_strExcel_Path);
             if (dcpresult.IsSuccess == true)
             {
-                //Common.DictionaryDataXml(dcpresult);
+                Common.CreateDataXml(dcpresult, m_srtXmlFolder);
             }
             rtxt_Log.Text += dcpresult.Message;
 

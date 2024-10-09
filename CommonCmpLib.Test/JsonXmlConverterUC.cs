@@ -87,7 +87,7 @@ namespace CommonCmpLib_Test
         {
             string strExtesionFile;
             string strTimestamp;
-            JsonXmlConvertResult objResult;
+            ConvertResult objResult;
             // Get the current timestamp for logging
             strTimestamp = DateTime.Now.ToString("HH:mm:ss");
 
