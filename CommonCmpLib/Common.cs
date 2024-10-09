@@ -48,13 +48,13 @@ namespace CommonCmpLib
                 case FileType.Parameter:
                     break;
                 case FileType.TraceRequest:
-                    XmlServices.ParseTraceXmlToList(x_strXmlPath);
+                   // XmlServices.ParseTraceXmlToList(x_strXmlPath);
                     break;
                 case FileType.EventTrigger:
-                    XmlServices.ParseEventXmlToList(x_strXmlPath, "eventtrigger");
+                    //XmlServices.ParseEventXmlToList(x_strXmlPath, "eventtrigger");
                     break;
                 case FileType.EventRequest:
-                    XmlServices.ParseEventXmlToList(x_strXmlPath, "eventrequest");
+                    //XmlServices.ParseEventXmlToList(x_strXmlPath, "eventrequest");
                     break;
                 case FileType.DataCollectionPlan:
                     break;
@@ -71,6 +71,7 @@ namespace CommonCmpLib
             ConvertResult ObjConvertResult;
             string strXmlResult;
             ObjConvertResult = new ConvertResult();
+            strXmlResult = string.Empty;
             if (string.IsNullOrEmpty(x_strOutFolder))
             {
                 ObjConvertResult.IsSuccess = false;
@@ -87,7 +88,7 @@ namespace CommonCmpLib
             {
                 case PARAMETER.SHEET_NAME:
                     //Create Parameter Xml
-                    XmlServices.CreateParameterToXml(x_objExlResult.Models, x_strOutFolder);
+                    strXmlResult = XmlServices.CreateParameterToXml(x_objExlResult.Models, x_strOutFolder);
                     break;
 
                 case TRACE.SHEET_NAME:
@@ -110,6 +111,17 @@ namespace CommonCmpLib
                     ObjConvertResult.Message = $"The {x_objExlResult.SheetName} sheet data is not valid";
                     break;
             }
+
+            if (string.IsNullOrEmpty(strXmlResult))
+            {
+                strXmlResult = $"{x_objExlResult.SheetName} : successfully converted to xml";
+                ObjConvertResult.Message = strXmlResult;
+            }
+            else
+            {
+
+            }
+
             return ObjConvertResult;
         }
 

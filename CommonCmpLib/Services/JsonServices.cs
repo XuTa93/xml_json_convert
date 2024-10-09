@@ -13,6 +13,8 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace CommonCmpLib
 {
@@ -344,6 +346,83 @@ namespace CommonCmpLib
 
                 jsonWriter.WriteEndObject(); // End Root object
             }
+        }
+
+
+        /// <summary>
+        /// Parses the Parameter from an XML file and converts them into a list of ExlEventModel objects.
+        /// </summary>
+        /// <returns>List of ExlParameterModel objects parsed from the XML file.</returns>
+        public static List<ExlParameterModel> ParseParameterXmlToList(string strXmlPath, string x_strName)
+        {
+            // Load the XML document from the provided path
+            XDocument objXmlDoc = XDocument.Load(strXmlPath);
+            var lstPara = objXmlDoc.Descendants()
+                .Where(obj => obj.Name.LocalName.ToLower() == x_strName)
+                .Select(objEvent => new ExlParameterModel
+                {
+
+                }).ToList();
+
+            return lstPara;
+        }
+
+        /// <summary>
+        /// Parses the TraceRequest from an XML file and converts them into a list of ExlEventModel objects.
+        /// </summary>
+        /// <returns>List of ExlTraceRequestModel objects parsed from the XML file.</returns>
+        public static List<ExlTraceRequestModel> ParseTraceXmlToList(string strXmlPath)
+        {
+            // Load the XML document from the provided path
+            XDocument objXmlDoc = XDocument.Load(strXmlPath);
+
+            // Parse the XML and create a list of ExlTraceRequestModel objects
+            var lstTrace = objXmlDoc.Descendants()
+                .Where(obj => obj.Name.LocalName.ToLower() == "tracerequest")
+                .Select(objTrace => new ExlTraceRequestModel
+                {
+                    No = objTrace.Attribute("no")?.Value, // Assuming 'No' is an attribute
+                    TraceID = objTrace.Attribute("traceid")?.Value,
+                    TraceName = objTrace.Attribute("tracename")?.Value,
+                    Description = objTrace.Attribute("description")?.Value,
+                    StartOn = objTrace.Descendants()
+                        .FirstOrDefault(trigger => trigger.Name.LocalName.ToLower() == "starton")?.Value,
+                    StopOn = objTrace.Descendants()
+                        .FirstOrDefault(trigger => trigger.Name.LocalName.ToLower() == "stopon")?.Value,
+                    ParametersID = objTrace.Descendants()
+                        .Where(p => p.Name.LocalName.ToLower() == "parameter")
+                        .Select(parameter => parameter.Attribute("paramid")?.Value)
+                        .ToList()
+                }).ToList();
+
+            return lstTrace;
+        }
+
+        /// <summary>
+        /// Parses the event requests from an XML file and converts them into a list of ExlEventModel objects.
+        /// </summary>
+        /// <returns>List of ExlEventModel objects parsed from the XML file.</returns>
+        public static List<ExlEventModel> ParseEventXmlToList(string strXmlPath, string x_strName)
+        {
+            // Load the XML document from the provided path
+            XDocument objXmlDoc = XDocument.Load(strXmlPath);
+
+            // Query to select event elements based on the specified name
+            List<ExlEventModel> lstEvents = objXmlDoc.Descendants()
+                .Where(obj => obj.Name.LocalName.ToLower() == x_strName)
+                .Select(objEvent => new ExlEventModel
+                {
+                    EventID = objEvent.Attribute("eventid")?.Value,
+                    EventName = objEvent.Attribute("eventname")?.Value,
+                    AndOr = objEvent.Descendants("detectconditions").FirstOrDefault()?.Attribute("andor")?.Value,
+                    Equation = objEvent.Descendants("parameter").FirstOrDefault()?.Attribute("equation")?.Value,
+                    Value = objEvent.Descendants("parameter").FirstOrDefault()?.Attribute("value")?.Value,
+                    ParametersID = objEvent.Descendants()
+                        .Where(p => p.Name.LocalName.ToLower() == "parameter")
+                        .Select(parameter => parameter.Attribute("paramid")?.Value)
+                        .ToList()
+                }).ToList();
+            return lstEvents;
         }
     }
 }

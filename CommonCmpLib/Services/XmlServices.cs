@@ -28,89 +28,226 @@ namespace CommonCmpLib
         {
             string strFilePath = Path.Combine(x_strOutFolder, "parameters.xml");
             string strError = "Checking";
+            string strXml;
 
+            try
+            {
+                // Generate XML string from data
+                strXml = GenerateParameterXmlString(x_lstData);
+
+                // Validate XML string
+                if (string.IsNullOrEmpty(strXml) == true)
+                {
+                    strError = "XML value null";
+                }
+                else
+                {
+                    // Save XML string to file
+                    File.WriteAllText(strFilePath, strXml);
+
+                    // Clear error if saving is successful
+                    strError = "";
+                }
+            }
+            catch (Exception objEx) // Catch all other exceptions
+            {
+                strError = HandleException(objEx);
+            }
+
+            return strError;
+        }
+
+        /// <summary>
+        /// Generate XML string from data
+        /// </summary>
+        /// <returns></returns>
+        private static string GenerateParameterXmlString(List<Dictionary<string, string>> x_lstData)
+        {
             // Create XmlWriterSettings with OmitXmlDeclaration = true
             XmlWriterSettings objXmlSettings = new XmlWriterSettings
             {
                 Indent = true,              // Format the XML with indentation
                 OmitXmlDeclaration = true,  // Omit the XML declaration
             };
-
-            try
+            using (StringWriter strWriter = new StringWriter())
             {
-                using (StringWriter strWriter = new StringWriter())
+                using (XmlWriter xmlWriter = XmlWriter.Create(strWriter, objXmlSettings))
                 {
-                    using (XmlWriter xmlWriter = XmlWriter.Create(strWriter, objXmlSettings))
+                    // Start the XML document
+                    xmlWriter.WriteStartDocument();
+                    xmlWriter.WriteStartElement("ns1", "parameters", DEFINE.NS1_NAMESPACE);
+
+                    // Iterate over the list of parameter dictionaries
+                    foreach (Dictionary<string, string> objPara in x_lstData)
                     {
-                        // Start the XML document
-                        xmlWriter.WriteStartDocument();
-                        xmlWriter.WriteStartElement("ns1", "parameters", DEFINE.NS1_NAMESPACE);
+                        // Create parameter element with attributes, checking if the key exists
+                        xmlWriter.WriteStartElement("parameter");
+                        xmlWriter.WriteAttributeString("paramid", objPara.ContainsKey(DEFINE.ParameterID) ? objPara[DEFINE.ParameterID] : string.Empty);
+                        xmlWriter.WriteAttributeString("paramname", objPara.ContainsKey(DEFINE.ParameterName) ? objPara[DEFINE.ParameterName] : string.Empty);
+                        xmlWriter.WriteAttributeString("locator", objPara.ContainsKey(DEFINE.Locator) ? objPara[DEFINE.Locator] : string.Empty);
+                        xmlWriter.WriteAttributeString("unit", objPara.ContainsKey(DEFINE.Unit) ? objPara[DEFINE.Unit] : string.Empty);
+                        xmlWriter.WriteAttributeString("type", objPara.ContainsKey(DEFINE.Type) ? objPara[DEFINE.Type] : string.Empty);
+                        xmlWriter.WriteAttributeString("array", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
+                        xmlWriter.WriteAttributeString("function", objPara.ContainsKey(DEFINE.Function) ? objPara[DEFINE.Function] : string.Empty);
+                        xmlWriter.WriteAttributeString("arg", objPara.ContainsKey(DEFINE.Arg) ? objPara[DEFINE.Arg] : string.Empty);
 
-                        // Iterate over the list of parameter dictionaries
-                        foreach (Dictionary<string, string> objPara in x_lstData)
-                        {
-                            // Create parameter element with attributes, checking if the key exists
-                            xmlWriter.WriteStartElement("parameter");
-                            xmlWriter.WriteAttributeString("paramid", objPara.ContainsKey(DEFINE.ParameterID) ? objPara[DEFINE.ParameterID] : string.Empty);
-                            xmlWriter.WriteAttributeString("paramname", objPara.ContainsKey(DEFINE.ParameterName) ? objPara[DEFINE.ParameterName] : string.Empty);
-                            xmlWriter.WriteAttributeString("locator", objPara.ContainsKey(DEFINE.Locator) ? objPara[DEFINE.Locator] : string.Empty);
-                            xmlWriter.WriteAttributeString("unit", objPara.ContainsKey(DEFINE.Unit) ? objPara[DEFINE.Unit] : string.Empty);
-                            xmlWriter.WriteAttributeString("type", objPara.ContainsKey(DEFINE.Type) ? objPara[DEFINE.Type] : string.Empty);
-                            xmlWriter.WriteAttributeString("array", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
-                            xmlWriter.WriteAttributeString("function", objPara.ContainsKey(DEFINE.Function) ? objPara[DEFINE.Function] : string.Empty);
-                            xmlWriter.WriteAttributeString("arg", objPara.ContainsKey(DEFINE.Arg) ? objPara[DEFINE.Arg] : string.Empty);
+                        // Start the extension element
+                        xmlWriter.WriteStartElement("extension");
 
-                            // Start the extension element
-                            xmlWriter.WriteStartElement("extension");
+                        // Start the datasource element with sourcetype attribute
+                        xmlWriter.WriteStartElement("datasource");
+                        xmlWriter.WriteAttributeString("sourcetype", objPara.ContainsKey(DEFINE.Sourcetype) ? objPara[DEFINE.Sourcetype] : string.Empty);
 
-                            // Start the datasource element with sourcetype attribute
-                            xmlWriter.WriteStartElement("datasource");
-                            xmlWriter.WriteAttributeString("sourcetype", objPara.ContainsKey(DEFINE.Sourcetype) ? objPara[DEFINE.Sourcetype] : string.Empty);
+                        // Start the memory element with attributes
+                        xmlWriter.WriteStartElement("memory");
+                        xmlWriter.WriteAttributeString("memname", objPara.ContainsKey(DEFINE.MemoryName) ? objPara[DEFINE.MemoryName] : string.Empty);
+                        xmlWriter.WriteAttributeString("offset", objPara.ContainsKey(DEFINE.Offset) ? objPara[DEFINE.Offset] : string.Empty);
+                        xmlWriter.WriteAttributeString("stype", objPara.ContainsKey(DEFINE.SourceType) ? objPara[DEFINE.SourceType] : string.Empty);
+                        xmlWriter.WriteAttributeString("sarray", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
 
-                            // Start the memory element with attributes
-                            xmlWriter.WriteStartElement("memory");
-                            xmlWriter.WriteAttributeString("memname", objPara.ContainsKey(DEFINE.MemoryName) ? objPara[DEFINE.MemoryName] : string.Empty);
-                            xmlWriter.WriteAttributeString("offset", objPara.ContainsKey(DEFINE.Offset) ? objPara[DEFINE.Offset] : string.Empty);
-                            xmlWriter.WriteAttributeString("stype", objPara.ContainsKey(DEFINE.SourceType) ? objPara[DEFINE.SourceType] : string.Empty);
-                            xmlWriter.WriteAttributeString("sarray", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
-
-                            // Close the memory element
-                            xmlWriter.WriteEndElement();
-
-                            // Write the fins element (self-closing)
-                            xmlWriter.WriteElementString("fins", string.Empty);
-
-                            // Close the datasource element
-                            xmlWriter.WriteEndElement();
-
-                            // Close the extension element
-                            xmlWriter.WriteEndElement();
-
-                            // Close the parameter element
-                            xmlWriter.WriteEndElement();
-                        }
-
-                        // Close the parameters element
+                        // Close the memory element
                         xmlWriter.WriteEndElement();
 
-                        // End the XML document
-                        xmlWriter.WriteEndDocument();
+                        // Write the fins element (self-closing)
+                        xmlWriter.WriteElementString("fins", string.Empty);
+
+                        // Close the datasource element
+                        xmlWriter.WriteEndElement();
+
+                        // Close the extension element
+                        xmlWriter.WriteEndElement();
+
+                        // Close the parameter element
+                        xmlWriter.WriteEndElement();
                     }
 
-                    // Convert the StringBuilder content to a string
-                    string xmlString = strWriter.ToString();
-                    // Define the file path for the XML file and save it
+                    // Close the parameters element
+                    xmlWriter.WriteEndElement();
 
-                    File.WriteAllText(strFilePath, xmlString);
-                    strError = "";
+                    // End the XML document
+                    xmlWriter.WriteEndDocument();
                 }
+
+                return strWriter.ToString();
             }
-            catch (Exception objEx)
-            {
-                strError = objEx.Message;
-            }
-            return strError;
         }
+
+        
+
+        /// <summary>
+        /// Converts a list of parameters stored in dictionaries into an XML format and saves it to a file.
+        /// </summary>
+        //public static string CreateParameterToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        //{
+        //    string strFilePath = Path.Combine(x_strOutFolder, "parameters.xml");
+        //    string strError = "Checking";
+        //    string xmlString;
+        //    // Create XmlWriterSettings with OmitXmlDeclaration = true
+        //    XmlWriterSettings objXmlSettings = new XmlWriterSettings
+        //    {
+        //        Indent = true,              // Format the XML with indentation
+        //        OmitXmlDeclaration = true,  // Omit the XML declaration
+        //    };
+
+        //    try
+        //    {
+        //        using (StringWriter strWriter = new StringWriter())
+        //        {
+        //            using (XmlWriter xmlWriter = XmlWriter.Create(strWriter, objXmlSettings))
+        //            {
+        //                // Start the XML document
+        //                xmlWriter.WriteStartDocument();
+        //                xmlWriter.WriteStartElement("ns1", "parameters", DEFINE.NS1_NAMESPACE);
+
+        //                // Iterate over the list of parameter dictionaries
+        //                foreach (Dictionary<string, string> objPara in x_lstData)
+        //                {
+        //                    // Create parameter element with attributes, checking if the key exists
+        //                    xmlWriter.WriteStartElement("parameter");
+        //                    xmlWriter.WriteAttributeString("paramid", objPara.ContainsKey(DEFINE.ParameterID) ? objPara[DEFINE.ParameterID] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("paramname", objPara.ContainsKey(DEFINE.ParameterName) ? objPara[DEFINE.ParameterName] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("locator", objPara.ContainsKey(DEFINE.Locator) ? objPara[DEFINE.Locator] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("unit", objPara.ContainsKey(DEFINE.Unit) ? objPara[DEFINE.Unit] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("type", objPara.ContainsKey(DEFINE.Type) ? objPara[DEFINE.Type] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("array", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("function", objPara.ContainsKey(DEFINE.Function) ? objPara[DEFINE.Function] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("arg", objPara.ContainsKey(DEFINE.Arg) ? objPara[DEFINE.Arg] : string.Empty);
+
+        //                    // Start the extension element
+        //                    xmlWriter.WriteStartElement("extension");
+
+        //                    // Start the datasource element with sourcetype attribute
+        //                    xmlWriter.WriteStartElement("datasource");
+        //                    xmlWriter.WriteAttributeString("sourcetype", objPara.ContainsKey(DEFINE.Sourcetype) ? objPara[DEFINE.Sourcetype] : string.Empty);
+
+        //                    // Start the memory element with attributes
+        //                    xmlWriter.WriteStartElement("memory");
+        //                    xmlWriter.WriteAttributeString("memname", objPara.ContainsKey(DEFINE.MemoryName) ? objPara[DEFINE.MemoryName] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("offset", objPara.ContainsKey(DEFINE.Offset) ? objPara[DEFINE.Offset] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("stype", objPara.ContainsKey(DEFINE.SourceType) ? objPara[DEFINE.SourceType] : string.Empty);
+        //                    xmlWriter.WriteAttributeString("sarray", objPara.ContainsKey(DEFINE.Array) ? objPara[DEFINE.Array] : string.Empty);
+
+        //                    // Close the memory element
+        //                    xmlWriter.WriteEndElement();
+
+        //                    // Write the fins element (self-closing)
+        //                    xmlWriter.WriteElementString("fins", string.Empty);
+
+        //                    // Close the datasource element
+        //                    xmlWriter.WriteEndElement();
+
+        //                    // Close the extension element
+        //                    xmlWriter.WriteEndElement();
+
+        //                    // Close the parameter element
+        //                    xmlWriter.WriteEndElement();
+        //                }
+
+        //                // Close the parameters element
+        //                xmlWriter.WriteEndElement();
+
+        //                // End the XML document
+        //                xmlWriter.WriteEndDocument();
+        //            }
+
+        //            // Convert the StringBuilder content to a string
+        //            xmlString = strWriter.ToString();
+
+        //            if (string.IsNullOrEmpty(xmlString) == true)
+        //            {
+        //                strError = "XML value null";
+        //            }
+        //            else
+        //            {
+        //                // Define the file path for the XML file and save it
+        //                File.WriteAllText(strFilePath, xmlString);
+        //                strError = "";
+        //            }             
+        //        }
+        //    }
+        //    catch (IOException ioEx) // Catches file I/O related errors like reading or writing to a file.
+        //    {
+        //        strError = "IO error occurred: " + ioEx.Message;
+        //    }
+        //    catch (UnauthorizedAccessException unauthEx) // Catch permission-specific exceptions
+        //    {
+        //        strError = "Access error: " + unauthEx.Message;
+        //    }
+        //    catch (XmlException xmlEx) // Catches errors related to the structure of the XML.
+        //    {
+        //        strError = "XML error: " + xmlEx.Message;
+        //    }
+        //    catch (ArgumentNullException argEx) // Catch null argument exceptions
+        //    {
+        //        strError = "Null argument error: " + argEx.Message;
+        //    }
+        //    catch (Exception objEx) // Catch all other exceptions
+        //    {
+        //        strError = "An unexpected error occurred: " + objEx.Message;
+        //    }
+
+        //    return strError;
+        //}
 
         /// <summary>
         /// Creates an XML file representing trace requests based on the provided list of data dictionaries.
@@ -404,82 +541,6 @@ namespace CommonCmpLib
 
 
         /// <summary>
-        /// Parses the Parameter from an XML file and converts them into a list of ExlEventModel objects.
-        /// </summary>
-        /// <returns>List of ExlParameterModel objects parsed from the XML file.</returns>
-        public static List<ExlParameterModel> ParseParameterXmlToList(string strXmlPath, string x_strName)
-        {
-            // Load the XML document from the provided path
-            XDocument objXmlDoc = XDocument.Load(strXmlPath);
-            var lstPara = objXmlDoc.Descendants()
-                .Where(obj => obj.Name.LocalName.ToLower() == x_strName)
-                .Select(objEvent => new ExlParameterModel
-                {
-
-                }).ToList();
-
-            return lstPara;
-        }
-
-        /// <summary>
-        /// Parses the TraceRequest from an XML file and converts them into a list of ExlEventModel objects.
-        /// </summary>
-        /// <returns>List of ExlTraceRequestModel objects parsed from the XML file.</returns>
-        public static List<ExlTraceRequestModel> ParseTraceXmlToList(string strXmlPath)
-        {
-            // Load the XML document from the provided path
-            XDocument objXmlDoc = XDocument.Load(strXmlPath);
-
-            // Parse the XML and create a list of ExlTraceRequestModel objects
-            var lstTrace = objXmlDoc.Descendants()
-                .Where(obj => obj.Name.LocalName.ToLower() == "tracerequest")
-                .Select(objTrace => new ExlTraceRequestModel
-                {
-                    No = objTrace.Attribute("no")?.Value, // Assuming 'No' is an attribute
-                    TraceID = objTrace.Attribute("traceid")?.Value,
-                    TraceName = objTrace.Attribute("tracename")?.Value,
-                    Description = objTrace.Attribute("description")?.Value,
-                    StartOn = objTrace.Descendants()
-                        .FirstOrDefault(trigger => trigger.Name.LocalName.ToLower() == "starton")?.Value,
-                    StopOn = objTrace.Descendants()
-                        .FirstOrDefault(trigger => trigger.Name.LocalName.ToLower() == "stopon")?.Value,
-                    ParametersID = objTrace.Descendants()
-                        .Where(p => p.Name.LocalName.ToLower() == "parameter")
-                        .Select(parameter => parameter.Attribute("paramid")?.Value)
-                        .ToList()
-                }).ToList();
-
-            return lstTrace;
-        }
-
-        /// <summary>
-        /// Parses the event requests from an XML file and converts them into a list of ExlEventModel objects.
-        /// </summary>
-        /// <returns>List of ExlEventModel objects parsed from the XML file.</returns>
-        public static List<ExlEventModel> ParseEventXmlToList(string strXmlPath, string x_strName)
-        {
-            // Load the XML document from the provided path
-            XDocument objXmlDoc = XDocument.Load(strXmlPath);
-
-            // Query to select event elements based on the specified name
-            List<ExlEventModel> lstEvents = objXmlDoc.Descendants()
-                .Where(obj => obj.Name.LocalName.ToLower() == x_strName)
-                .Select(objEvent => new ExlEventModel
-                {
-                    EventID = objEvent.Attribute("eventid")?.Value,
-                    EventName = objEvent.Attribute("eventname")?.Value,
-                    AndOr = objEvent.Descendants("detectconditions").FirstOrDefault()?.Attribute("andor")?.Value,
-                    Equation = objEvent.Descendants("parameter").FirstOrDefault()?.Attribute("equation")?.Value,
-                    Value = objEvent.Descendants("parameter").FirstOrDefault()?.Attribute("value")?.Value,
-                    ParametersID = objEvent.Descendants()
-                        .Where(p => p.Name.LocalName.ToLower() == "parameter")
-                        .Select(parameter => parameter.Attribute("paramid")?.Value)
-                        .ToList()
-                }).ToList();
-            return lstEvents;
-        }
-
-        /// <summary>
         /// Parses the DataCollectionPlan requests from an XML file and converts them into a list of ExlEventModel objects.
         /// </summary>
         /// <returns>List of ExlDCPModel objects parsed from the XML file.</returns>
@@ -626,6 +687,27 @@ namespace CommonCmpLib
                 .ToList();
 
             return lstDCP;
+        }
+
+
+        /// <summary>
+        /// Handles exceptions and returns a corresponding error message.
+        /// </summary>
+        private static string HandleException(Exception objEx)
+        {
+            switch (objEx)
+            {
+                case IOException ioEx:
+                    return "IO error occurred: " + ioEx.Message;
+                case UnauthorizedAccessException unauthEx:
+                    return "Access error: " + unauthEx.Message;
+                case XmlException xmlEx:
+                    return "XML error: " + xmlEx.Message;
+                case ArgumentNullException argEx:
+                    return "Null argument error: " + argEx.Message;
+                default:
+                    return "An unexpected error occurred: " + objEx.Message;
+            }
         }
     }
 }
