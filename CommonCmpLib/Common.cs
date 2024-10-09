@@ -59,7 +59,7 @@ namespace CommonCmpLib
                 case FileType.DataCollectionPlan:
                     break;
                 case FileType.Unknown:
-                    XmlServices.ParseDCPXmlToModel(x_strXmlPath);
+                    //XmlServices.ParseDCPXmlToModel(x_strXmlPath);
                     break;
                 default:
                     break;
@@ -88,12 +88,12 @@ namespace CommonCmpLib
             {
                 case PARAMETER.SHEET_NAME:
                     //Create Parameter Xml
-                    strXmlResult = XmlServices.CreateParameterToXml(x_objExlResult.Models, x_strOutFolder);
+                    strXmlResult = XmlServices.GenerateParameterToXml(x_objExlResult.Models, x_strOutFolder);
                     break;
 
                 case TRACE.SHEET_NAME:
                     //Create TraceRequest Xml
-                    XmlServices.CreateTraceToXml(x_objExlResult.Models, x_strOutFolder);
+                    XmlServices.GenerateTraceToXml(x_objExlResult.Models, x_strOutFolder);
                     break;
 
                 case EVENT.SHEET_NAME:
@@ -124,8 +124,6 @@ namespace CommonCmpLib
 
             return ObjConvertResult;
         }
-
-
 
         /// <summary>
         /// Validates the file at the specified path and determines its type based on the content.
@@ -290,5 +288,24 @@ namespace CommonCmpLib
             return objResult;
         }
 
+        /// <summary>
+        /// Handles exceptions and returns a corresponding error message.
+        /// </summary>
+        internal static string HandleException(Exception objEx)
+        {
+            switch (objEx)
+            {
+                case IOException ioEx:
+                    return "IO error occurred: " + ioEx.Message;
+                case UnauthorizedAccessException unauthEx:
+                    return "Access error: " + unauthEx.Message;
+                case XmlException xmlEx:
+                    return "XML error: " + xmlEx.Message;
+                case ArgumentNullException argEx:
+                    return "Null argument error: " + argEx.Message;
+                default:
+                    return "An unexpected error occurred: " + objEx.Message;
+            }
+        }
     }
 }
