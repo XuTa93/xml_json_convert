@@ -18,8 +18,7 @@ namespace CommonCmpLib_Test
 
         private void ExportParameterSheet(string x_strExcel_Path)
         {
-            ExcelProcessResult<ExlParameterModel> objParameterProcess;
-            bool IsSheetExits;
+
         }
         private void btn_Excel_Path_Click(object objSender, EventArgs objEvt)
         {
@@ -81,13 +80,29 @@ namespace CommonCmpLib_Test
             //DCPService.ReadFromExcel(m_strExcel_Path);
             rtxt_Log.Text += "--------------------------------------------------->\r\n";
 
+            var excelData = ExcelDataService.Create(ExcelSheetName.Parameter);
+            var objPara = excelData.Read(m_strExcel_Path);
+            if (objPara.IsSuccess == true)
+            {
+                Common.DictionaryDataXml(objPara,m_srtXmlFolder);
+            }
+            rtxt_Log.Text += objPara.Message;
+
             var @event = ExcelDataService.Create(ExcelSheetName.Event);
             var evResutl = @event.Read(m_strExcel_Path);
             if (evResutl.IsSuccess == true)
             {
-                Common.DictionaryDataXml(evResutl);
+                //Common.DictionaryDataXml(evResutl);
             }
             rtxt_Log.Text += evResutl.Message;
+
+            var trace = ExcelDataService.Create(ExcelSheetName.Trace);
+            var traceresult = trace.Read(m_strExcel_Path);
+            if (traceresult.IsSuccess == true)
+            {
+                //Common.DictionaryDataXml(traceresult);
+            }
+            rtxt_Log.Text += traceresult.Message;
 
             var dcp = ExcelDataService.Create(ExcelSheetName.DataCollectionPlan);
             var dcpresult = dcp.Read(m_strExcel_Path);
@@ -97,21 +112,7 @@ namespace CommonCmpLib_Test
             }
             rtxt_Log.Text += dcpresult.Message;
 
-            var excelData = ExcelDataService.Create(ExcelSheetName.Parameter);
-            var objPara = excelData.Read(m_strExcel_Path);
-            if (objPara.IsSuccess == true)
-            {
-                //Common.DictionaryDataXml(objPara);
-            }
-            rtxt_Log.Text += objPara.Message;
 
-            var trace = ExcelDataService.Create(ExcelSheetName.Trace);
-            var traceresult = trace.Read(m_strExcel_Path);
-            if (traceresult.IsSuccess == true)
-            {
-                //Common.DictionaryDataXml(traceresult);
-            }
-            rtxt_Log.Text += traceresult.Message;
             rtxt_Log.Text += "<--------------------------------------------------\r\n";
         }
 
