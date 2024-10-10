@@ -1,27 +1,16 @@
-﻿//*****************************************************************************
-// 		    ：
-// 内容		：Collect and transform data Excel to Xml & Xml <=> Json
-// 		    ：
-// 作成者	：TangLx
-// 作成日	：2024/10/04
-// 		    ：
-// 修正履歴	：
-// 		    ：
-// 		    ：
-//*****************************************************************************
-
+﻿using JsonXmlConveter;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace JsonXmlConveter
+namespace JsonXmlConverter
 {
-    public static class Convert
+    public static class JsonServices
     {
         /// <summary>
         /// Write TraceRequest Models To Json Using Json Writer
@@ -106,7 +95,7 @@ namespace JsonXmlConveter
             {
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                return Converter.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
         }
@@ -183,7 +172,7 @@ namespace JsonXmlConveter
             {
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                return Converter.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
         }
 
@@ -270,7 +259,7 @@ namespace JsonXmlConveter
             {
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                return Converter.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
         }
 
@@ -398,429 +387,18 @@ namespace JsonXmlConveter
 
                         jsonWriter.WriteEndObject(); // End Root object
                     }
-                }    
-                   
+                }
+
                 return string.Empty; // Return empty string if successful
             }
             catch (Exception objEx) // Catch all exceptions
             {
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                return Converter.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
         }
 
-        /// <summary>
-        /// Parses the XML file and creates a list of ExlTraceRequestModel objects.
-        /// </summary>
-        /// <returns>A string indicating an error message if an error occurs; otherwise, returns string.Empty.</returns>
-        public static string ParseTraceXmlToList(string strXmlPath, out List<ExlTraceRequestModel> x_lstTrace)
-        {
-            x_lstTrace = new List<ExlTraceRequestModel>();
-            try
-            {
-                // Load the XML document from the provided path
-                XDocument objXmlDoc = XDocument.Load(strXmlPath);
-
-                // Parse the XML and create a list of ExlTraceRequestModel objects
-                x_lstTrace = objXmlDoc.Descendants()
-                    .Where(obj => obj.Name.LocalName.ToLower() == "tracerequest")
-                    .Select(objTrace => new ExlTraceRequestModel
-                    {
-                        No = objTrace.Attribute("no")?.Value, // Assuming 'No' is an attribute
-                TraceID = objTrace.Attribute("traceid")?.Value,
-                        TraceName = objTrace.Attribute("tracename")?.Value,
-                        Description = objTrace.Attribute("description")?.Value,
-                        StartOn = objTrace.Descendants()
-                            .FirstOrDefault(trigger => trigger.Name.LocalName.ToLower() == "starton")?.Value,
-                        StopOn = objTrace.Descendants()
-                            .FirstOrDefault(trigger => trigger.Name.LocalName.ToLower() == "stopon")?.Value,
-                        ParametersID = objTrace.Descendants()
-                            .Where(p => p.Name.LocalName.ToLower() == "parameter")
-                            .Select(parameter => parameter.Attribute("paramid")?.Value)
-                            .ToList()
-                    }).ToList();
-
-                return string.Empty; // Return string.Empty if parsing is successful
-            }
-            catch (Exception objEx) // Catch all exceptions
-            {
-                StackTrace objStackTrace = new StackTrace();
-                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return HandleException(objEx, strMethodName); // Handle the exception and return the error message
-            }
-        }
-
-        /// <summary>
-        /// Parses the XML file and creates a list of ExlEventModel objects based on the specified name.
-        /// </summary>
-        /// <returns>A string indicating an error message if an error occurs; otherwise, returns string.Empty.</returns>
-        public static string ParseEventXmlToList(string strXmlPath, string x_strName, out List<ExlEventModel> lstEvents)
-        {
-            lstEvents = new List<ExlEventModel>(); // Initialize the output list
-
-            try
-            {
-                // Load the XML document from the provided path
-                XDocument objXmlDoc = XDocument.Load(strXmlPath);
-
-                // Query to select event elements based on the specified name
-                lstEvents = objXmlDoc.Descendants()
-                    .Where(obj => obj.Name.LocalName.ToLower() == x_strName)
-                    .Select(objEvent => new ExlEventModel
-                    {
-                        EventID = objEvent.Attribute("eventid")?.Value,
-                        EventName = objEvent.Attribute("eventname")?.Value,
-                        AndOr = objEvent.Descendants("detectconditions").FirstOrDefault()?.Attribute("andor")?.Value,
-                        Equation = objEvent.Descendants("parameter").FirstOrDefault()?.Attribute("equation")?.Value,
-                        Value = objEvent.Descendants("parameter").FirstOrDefault()?.Attribute("value")?.Value,
-                        ParametersID = objEvent.Descendants()
-                            .Where(p => p.Name.LocalName.ToLower() == "parameter")
-                            .Select(parameter => parameter.Attribute("paramid")?.Value)
-                            .ToList()
-                    }).ToList();
-
-                return string.Empty; // Return string.Empty if parsing is successful
-            }
-            catch (Exception objEx) // Catch all exceptions
-            {
-                StackTrace objStackTrace = new StackTrace();
-                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return HandleException(objEx, strMethodName); // Handle the exception and return the error message
-            }
-        }
-
-        /// <summary>
-        /// Parses the XML file and creates an ExlDCPModel object based on the contents of the file.
-        /// </summary>
-        /// <returns>An ExlDCPModel object populated with data from the XML file, or null if an error occurs.</returns>
-        public static string ParseDCPXmlToModel(string strXmlPath, out ExlDCPModel dcpModel)
-        {
-            dcpModel = new ExlDCPModel(); // Initialize the output model
-            string strNamespace = "";
-
-            try
-            {
-                // Load the XML document using XDocument
-                XDocument objXmlDoc = XDocument.Load(strXmlPath);
-
-                // Find the DCPTable element in the XML document
-                var dcpTableElement = objXmlDoc.Root.Element(strNamespace + "DCPTable");
-
-                if (dcpTableElement != null)
-                {
-                    // Get the MachineName value from the Macname element
-                    dcpModel.MachineName = dcpTableElement.Element(strNamespace + "Macname")?.Value;
-
-                    // Find the DataCollectionPlan element
-                    var dataCollectionPlanElement = dcpTableElement.Element(strNamespace + "DataCollectionPlan");
-
-                    if (dataCollectionPlanElement != null)
-                    {
-                        // Get attributes from the DataCollectionPlan element
-                        dcpModel.PlanID = dataCollectionPlanElement.Attribute("id")?.Value;
-                        dcpModel.PlanName = dataCollectionPlanElement.Attribute("name")?.Value;
-                        dcpModel.Description = dataCollectionPlanElement.Attribute("Description")?.Value;
-
-                        // Retrieve the StartEvent -> EventRequest -> eventId value
-                        dcpModel.StartEvent = dataCollectionPlanElement
-                            .Element(strNamespace + "StartEvent")?
-                            .Element(strNamespace + "EventRequests")?
-                            .Element(strNamespace + "EventRequest")?
-                            .Attribute("eventId")?.Value;
-
-                        // Retrieve the EndEvent -> EventRequest -> eventId value
-                        dcpModel.EndEvent = dataCollectionPlanElement
-                            .Element(strNamespace + "EndEvent")?
-                            .Element(strNamespace + "EventRequests")?
-                            .Element(strNamespace + "EventRequest")?
-                            .Attribute("eventId")?.Value;
-
-                        // Retrieve the list of ParametersID from Contents -> ParameterRequests
-                        dcpModel.ParametersID = dataCollectionPlanElement
-                            .Element(strNamespace + "Contents")?
-                            .Element(strNamespace + "ParameterRequests")?
-                            .Elements(strNamespace + "ParameterRequest")
-                            .Select(param => param.Attribute("parameterName")?.Value)
-                            .Where(param => param != null)
-                            .ToList();
-                    }
-                }
-
-                return string.Empty; // Return string.Empty if parsing is successful
-            }
-            catch (Exception objEx) // Catch all exceptions
-            {
-                StackTrace objStackTrace = new StackTrace();
-                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return HandleException(objEx, strMethodName); // Handle the exception and return the error message
-            }
-        }
-
-        /// <summary>
-        /// Converts an XML file to JSON format if the file .
-        /// </summary>
-        /// <returns>Returns a JsonXmlConversionResult indicating the success status and message of the conversion.</returns>
-        public static ConvertResult ConvertXmlToJson_Parameter(string x_strXmlPath, string x_strJsonPath)
-        {
-            // Declare variables at the beginning
-            ConvertResult objResult;
-            DataType convertType;
-            XmlDocument xmlDoc;
-            string strJson;
-            string strFileName;
-            objResult = new ConvertResult();
-            strFileName = Path.GetFileName(x_strXmlPath);
-
-            // Validate the input file to check if it is of type Parameter
-            convertType = ValidateType(x_strXmlPath);
-            if (convertType != DataType.Parameter)
-            {
-                objResult.IsSuccess = false;
-                objResult.Message = $"{convertType} type of the provided file.";
-                return objResult;
-            }
-
-            try
-            {
-                xmlDoc = new XmlDocument();
-                xmlDoc.Load(x_strXmlPath);
-
-                // Store the original XML content as a string
-                objResult.XmlData = xmlDoc.OuterXml;
-
-                // Convert XML to JSON
-                strJson = JsonConvert.SerializeObject(xmlDoc, Newtonsoft.Json.Formatting.Indented, new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Include // Include null values
-                });
-
-                // Store JSON in the result object
-                objResult.JsonData = strJson;
-
-                // Save the JSON data to the specified file path
-                File.WriteAllText(x_strJsonPath, strJson);
-
-                // If the conversion and saving are successful
-                objResult.IsSuccess = true;
-                objResult.Message = $"{strFileName} [ {convertType} Type ]  Converted to JSON : {x_strJsonPath}";
-            }
-            catch (Exception xmlEx)
-            {
-                StackTrace objStackTrace = new StackTrace();
-                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                // If an error occurs
-                objResult.IsSuccess = false;
-                objResult.Message = $"{strFileName} [ {convertType} Type ] XML Error during conversion: {HandleException(xmlEx, strMethodName)}";
-            }
-            return objResult;
-        }
-
-        private static ConvertResult XmlToJson_TraceRequest(string x_strXmlPath, string x_strJsonPath)
-        {
-            List<ExlTraceRequestModel> lstTrace;
-            ConvertResult objResult;
-            string strJsonResult;
-            string srtParseResult;
-            objResult = new ConvertResult();
-
-            srtParseResult = ParseTraceXmlToList(x_strXmlPath, out lstTrace);
-
-            if (string.IsNullOrEmpty(srtParseResult) == true)
-            {
-                strJsonResult = WriteTraceRequestToJson(lstTrace, x_strJsonPath);
-                if (string.IsNullOrEmpty(srtParseResult) == true)
-                {
-                    objResult.IsSuccess = true;
-                }
-                objResult.Message = strJsonResult;
-                objResult.IsSuccess = false;
-                
-            }
-            else
-            {
-                objResult.IsSuccess = false;
-                objResult.Message = srtParseResult;
-            }
-            return objResult;
-        }
-
-
-        public static ConvertResult ConvertXmlToJson_TraceRequest(string x_strXmlPath, string x_strJsonPath)
-        {
-            DataType convertType;
-            List<ExlTraceRequestModel> lstTrace;
-            ConvertResult objResult;
-            string strJsonResult;
-            string srtParseResult;
-            string strFileName;
-            objResult = new ConvertResult();
-            strFileName = Path.GetFileName(x_strXmlPath);
-
-            // Validate the input file to check if it is of type Parameter
-            convertType = ValidateType(x_strXmlPath);
-            if (convertType != DataType.TraceRequest)
-            {
-                objResult.IsSuccess = false;
-                objResult.Message = $"{convertType} type of the provided file.";
-                return objResult;
-            }
-            try
-            {
-
-                srtParseResult = ParseTraceXmlToList(x_strXmlPath, out lstTrace);
-
-                if (string.IsNullOrEmpty(srtParseResult) == true)
-                {
-                    strJsonResult = WriteTraceRequestToJson(lstTrace, x_strJsonPath);
-                    if (string.IsNullOrEmpty(strJsonResult))
-                    {
-                        objResult.IsSuccess = true;
-                        objResult.Message = $"{strFileName} [ {convertType} Type ]  Converted to JSON : {x_strJsonPath}";
-                    }
-                }
-                else
-                {
-                    objResult.IsSuccess = false;
-                    objResult.Message = $"{strFileName} [ {convertType} Type ] : {srtParseResult}";
-                    return objResult;
-                }
-            }
-            catch (Exception xmlEx)
-            {
-                StackTrace objStackTrace = new StackTrace();
-                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                objResult.IsSuccess = false;
-                objResult.Message = $"{strFileName} [ {convertType} Type ] XML Error during conversion: {HandleException(xmlEx, strMethodName)}";
-            }
-            return objResult;
-        }
-
-        /// <summary>
-        /// Converts a JSON file to XML format if the file is of type Parameter.
-        /// </summary>
-        /// <returns>Returns a JsonXmlConversionResult indicating the success status and message of the conversion.</returns>
-        public static ConvertResult ConvertJsonToXml(string x_strJsonPath, string x_strXmlPath)
-        {
-            // Declare variables at the beginning
-            DataType converType;
-            XmlDocument xmlDoc;
-            string strJsonData;
-            ConvertResult objResult = new ConvertResult();
-
-            // Validate the input file to check if it is of type Parameter
-            converType = ValidateType(x_strJsonPath);
-            if (converType == DataType.Unknown)
-            {
-                objResult.IsSuccess = false;
-                objResult.Message = $"Unknown type of the provided file.";
-                return objResult;
-            }
-            try
-            {
-                // Read JSON file content
-                strJsonData = File.ReadAllText(x_strJsonPath);
-
-                // Convert JSON to XmlDocument
-                xmlDoc = JsonConvert.DeserializeXmlNode(strJsonData);
-
-                // Store the original JSON content as a string (optional)
-                objResult.JsonData = strJsonData;
-
-                // Save the XmlDocument to the specified file path
-                xmlDoc.Save(x_strXmlPath);
-
-                // If the conversion and saving are successful
-                objResult.IsSuccess = true;
-                objResult.XmlData = xmlDoc.OuterXml; // Store the converted XML
-                objResult.Message = $"{converType} JSON File Conversion successful! XML saved to: {x_strXmlPath}";
-            }
-            catch (JsonException)
-            {
-                objResult.IsSuccess = false;
-                objResult.Message = "The provided file is not a valid Json format.";
-                return objResult;
-            }
-            catch (Exception objEx)
-            {
-                // If an error occurs
-                objResult.IsSuccess = false;
-                objResult.Message = $"{converType} JSON Error during conversion: {objEx.Message}";
-            }
-
-            return objResult;
-        }
-
-        /// <summary>
-        /// Validates the file at the specified path and determines its type based on the content.
-        /// </summary>
-        /// <returns>Returns the FileType indicating the type of the file based on its content.</returns>
-        public static DataType ValidateType(string x_strFilePath)
-        {
-            // Declare variable for file content at the beginning
-            string strFileContent;
-
-            // Return Unknown if the file does not exist
-            if (File.Exists(x_strFilePath) == false)
-            {
-                return DataType.Unknown;
-            }
-
-            // Load the file content
-            strFileContent = File.ReadAllText(x_strFilePath);
-
-            // Determine the file type based on the content
-            if (strFileContent.Contains(DEFINE.NS1_PARAMETERS))
-            {
-                return DataType.Parameter;
-            }
-            else if (strFileContent.Contains(DEFINE.NS1_TRACEREQUESTS))
-            {
-                return DataType.TraceRequest;
-            }
-            else if (strFileContent.Contains(DEFINE.NS1_EVENTTRIGGERS))
-            {
-                return DataType.EventTrigger;
-            }
-            else if (strFileContent.Contains(DEFINE.NS1_EVENTREQUESTS))
-            {
-                return DataType.EventRequest;
-            }
-            else if (strFileContent.Contains(DEFINE.DCPTABLES))
-            {
-                return DataType.DataCollectionPlan;
-            }
-
-            // If none of the above matches, return Unknown
-            return DataType.Unknown;
-        }
-
-        /// <summary>
-        /// Handles exceptions and returns a corresponding error message.
-        /// </summary>
-        internal static string HandleException(Exception objEx, string x_strHandleName)
-        {
-            string strLogErr = x_strHandleName + ": ";
-            switch (objEx)
-            {
-                case IOException ioEx:
-                    strLogErr += "IO error occurred: " + ioEx.Message;
-                    break;
-                case UnauthorizedAccessException unauthEx:
-                    strLogErr += "Access error: " + unauthEx.Message;
-                    break;
-                case XmlException xmlEx:
-                    strLogErr += "XML error: " + xmlEx.Message;
-                    break;
-                case ArgumentNullException argEx:
-                    strLogErr += "Null argument error: " + argEx.Message;
-                    break;
-                default:
-                    strLogErr += "An unexpected error occurred: " + objEx.Message;
-                    break;
-            }
-            return strLogErr;
-        }
     }
 }

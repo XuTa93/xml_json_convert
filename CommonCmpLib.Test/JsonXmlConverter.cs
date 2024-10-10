@@ -117,19 +117,25 @@ namespace JsonXmlConverter_Tool
                 // Check which radio button is checked and call the corresponding method
                 if (rbtn_Parameter.Checked == true)
                 {
-                    HandleParameterFile(strFilePath);
+                    if (m_selectedType == DataType.Parameter)
+                    {
+                        HandleParameterFile(strFilePath);
+                    }
                 }
                 else if (rbtn_TraceRequest.Checked == true)
                 {
-                    HandleTraceRequestFile(strFilePath);
+                    if (m_selectedType == DataType.TraceRequest)
+                    {
+                        HandleTraceRequestFile(strFilePath);
+                    }
                 }
                 else if (rbtn_EventTrigger.Checked == true)
                 {
-                    HandleEventFile();
+                    HandleEventTriggerFile(strFilePath);
                 }
                 else if (rbtn_EventRequest.Checked == true)
                 {
-                    HandleEventFile();
+                    HandleEventRequestFile(strFilePath);
                 }
                 else if (rbtn_DataCollectionPlan.Checked == true)
                 {
@@ -154,7 +160,7 @@ namespace JsonXmlConverter_Tool
                 // Get the file name from the file path
                 strFileName = Path.GetFileName(strFilePath);
                 // Validate the file type
-                datatType = JsonXmlConveter.Convert.ValidateType(strFilePath);
+                datatType = JsonXmlConveter.Converter.ValidateType(strFilePath);
 
                 // Check if the file type matches the selected convert type
                 if (datatType != m_selectedType)
@@ -243,13 +249,13 @@ namespace JsonXmlConverter_Tool
             if (rbtn_Xml.Checked == true)
             {
                 // Convert the XML file to JSON format
-                objResult = JsonXmlConveter.Convert.ConvertXmlToJson_Parameter(strXmlPath, strJsonPath);
+                objResult = Converter.ConvertXmlToJson_Parameter(strXmlPath, strJsonPath);
                 Log(objResult);
             }
             else
             {
                 // Convert the JSON file to XML format
-                objResult = JsonXmlConveter.Convert.ConvertJsonToXml(strJsonPath, strXmlPath);
+                objResult = Converter.ConvertJsonToXml(strJsonPath, strXmlPath);
                 Log(objResult);
             }
         }
@@ -270,13 +276,13 @@ namespace JsonXmlConverter_Tool
             if (rbtn_Xml.Checked == true)
             {
                 // Convert the XML file to JSON format
-                objResult = JsonXmlConveter.Convert.ConvertXmlToJson_TraceRequest(strXmlPath, strJsonPath);
+                objResult = Converter.ConvertXmlToJson_TraceRequest(strXmlPath, strJsonPath);
                 Log(objResult);
             }
             else
             {
                 // Convert the JSON file to XML format
-                objResult = JsonXmlConveter.Convert.ConvertJsonToXml(strJsonPath, strXmlPath);
+                objResult = Converter.ConvertJsonToXml(strJsonPath, strXmlPath);
                 Log(objResult);
             }
         }
@@ -284,9 +290,55 @@ namespace JsonXmlConverter_Tool
         /// <summary>
         /// Handles the logic for the Event selection.
         /// </summary>
-        private void HandleEventFile()
+        private void HandleEventTriggerFile(string x_strFileName)
         {
+            string strXmlPath;
+            string strJsonPath;
+            ConvertResult objResult;
 
+            strXmlPath = GetXmlFile(x_strFileName);
+            strJsonPath = GetJsonFile(x_strFileName);
+
+            // Check if the selected file format is XML
+            if (rbtn_Xml.Checked == true)
+            {
+                // Convert the XML file to JSON format
+                objResult = Converter.ConvertXmlToJson_EventTrigger(strXmlPath, strJsonPath);
+                Log(objResult);
+            }
+            else
+            {
+                // Convert the JSON file to XML format
+                objResult = Converter.ConvertJsonToXml(strJsonPath, strXmlPath);
+                Log(objResult);
+            }
+        }
+
+        /// <summary>
+        /// Handles the logic for the Event selection.
+        /// </summary>
+        private void HandleEventRequestFile(string x_strFileName)
+        {
+            string strXmlPath;
+            string strJsonPath;
+            ConvertResult objResult;
+
+            strXmlPath = GetXmlFile(x_strFileName);
+            strJsonPath = GetJsonFile(x_strFileName);
+
+            // Check if the selected file format is XML
+            if (rbtn_Xml.Checked == true)
+            {
+                // Convert the XML file to JSON format
+                objResult = Converter.ConvertXmlToJson_EventRequest(strXmlPath, strJsonPath);
+                Log(objResult);
+            }
+            else
+            {
+                // Convert the JSON file to XML format
+                objResult = Converter.ConvertJsonToXml(strJsonPath, strXmlPath);
+                Log(objResult);
+            }
         }
 
         /// <summary>

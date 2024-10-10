@@ -45,16 +45,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DEFINE.cs" />
-    <Compile Include="Covert.cs" />
+    <Compile Include="Converter.cs" />
+    <Compile Include="JsonServices.cs" />
     <Compile Include="Model\1_Parameter\ExlParameterModel.cs" />
     <Compile Include="Model\2_Trace\ExlTraceRequestModel.cs" />
     <Compile Include="Model\3_Event\ExlEventModel.cs" />
     <Compile Include="Model\4_DataCollectionPlan\ExlDCPModel.cs" />
     <Compile Include="Model\Result\ConvertResult .cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XmlServices.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="XmlService\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
