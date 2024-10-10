@@ -13,6 +13,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -102,7 +103,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all exceptions
             {
-                return Common.HandleException(objEx); // Handle the exception and return the error message
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
         }
@@ -177,7 +180,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all exceptions
             {
-                return Common.HandleException(objEx); // Handle the exception and return the error message
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
         }
 
@@ -262,7 +267,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all exceptions
             {
-                return Common.HandleException(objEx); // Handle the exception and return the error message
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
         }
 
@@ -396,7 +403,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all exceptions
             {
-                return Common.HandleException(objEx); // Handle the exception and return the error message
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
         }
@@ -436,7 +445,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all exceptions
             {
-                return Common.HandleException(objEx); 
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
         }
 
@@ -473,7 +484,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all exceptions
             {
-                return Common.HandleException(objEx); // Handle the exception and return the error message
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
         }
 
@@ -538,9 +551,10 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all exceptions
             {
-                return Common.HandleException(objEx); // Handle the exception and return the error message
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
         }
-
     }
 }

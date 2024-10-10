@@ -98,7 +98,7 @@ namespace CommonCmpLib_Test
                 strExtesionFile = Path.ChangeExtension(x_strFilePath, ".json");
 
                 // Convert the XML file to JSON format
-                objResult = Common.ConvertXmlToJson_Parameter(x_strFilePath, strExtesionFile);
+                objResult = CommonCmpLib.Convert.ConvertXmlToJson_Parameter(x_strFilePath, strExtesionFile);
             }
             else
             {
@@ -106,7 +106,7 @@ namespace CommonCmpLib_Test
                 strExtesionFile = Path.ChangeExtension(x_strFilePath, ".xml");
 
                 // Convert the JSON file to XML format
-                objResult = Common.ConvertJsonToXml_Parameter(x_strFilePath, strExtesionFile);
+                objResult = CommonCmpLib.Convert.ConvertJsonToXml_Parameter(x_strFilePath, strExtesionFile);
             }
 
             // Log the result with the status and message
@@ -134,6 +134,11 @@ namespace CommonCmpLib_Test
         /// Handles the logic for the Data Collection Plan selection.
         /// </summary>
         private void HandleDataCollectionPlanFile()
+        {
+
+        }
+
+        private void JsonXmlConverterUC_Load(object sender, EventArgs e)
         {
 
         }

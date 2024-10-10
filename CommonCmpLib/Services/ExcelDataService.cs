@@ -97,7 +97,7 @@ namespace CommonCmpLib
         }
 
         // Factory method
-        public static ExcelDataService Create(ExcelSheetName x_strSheetName)
+        public static ExcelDataService Initialize(ExcelSheetName x_strSheetName)
         {
             switch (x_strSheetName)
             {
@@ -177,7 +177,7 @@ namespace CommonCmpLib
                 if (!File.Exists(x_strFilePath))
                 {
                     m_objProcessResult.IsSuccess = false;
-                    m_objProcessResult.Message = $"- {DateTime.Now} : {SheetName} File not found: {x_strFilePath} {Environment.NewLine}";
+                    m_objProcessResult.Message = $"{SheetName} File not found: {x_strFilePath} {Environment.NewLine}";
                     return m_objProcessResult;
                 }
 
@@ -215,7 +215,6 @@ namespace CommonCmpLib
                 
                 // Prepare the message
                 strMessage = new StringBuilder();
-                strMessage.Append("- " + DateTime.Now.ToString() + " : ");
                 strMessage.Append(SheetName);
                 if (bIsSuccess == true)
                 {
@@ -246,20 +245,20 @@ namespace CommonCmpLib
                         strMessage.AppendLine($"     + {cellErr}");
                     }
                 }
-                m_objProcessResult.Message = strMessage.ToString().TrimEnd() + Environment.NewLine; // Remove trailing whitespace
+                m_objProcessResult.Message = strMessage.ToString().TrimEnd(); // Remove trailing whitespace
 
                 return m_objProcessResult;
             }
             catch (IOException objEx)
             {
                 m_objProcessResult.IsSuccess = false;
-                m_objProcessResult.Message = $"- {DateTime.Now} : {SheetName} Sheet Error reading the Excel file: {objEx.Message} {Environment.NewLine}";
+                m_objProcessResult.Message = $"{SheetName} Sheet Error reading the Excel file: {objEx.Message}";
                 return m_objProcessResult;
             }
             catch (Exception objEx)
             {
                 m_objProcessResult.IsSuccess = false;
-                m_objProcessResult.Message = $"- {DateTime.Now} :{m_strSheetName} Sheet An error occurred: {objEx.Message} {Environment.NewLine}";
+                m_objProcessResult.Message = $"{m_strSheetName} Sheet An error occurred: {objEx.Message}";
                 return m_objProcessResult;
             }
         }

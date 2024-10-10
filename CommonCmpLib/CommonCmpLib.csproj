@@ -107,7 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common.cs" />
+    <Compile Include="Convert.cs" />
     <Compile Include="Model\4_DataCollectionPlan\ExlDCPModel.cs" />
     <Compile Include="Model\3_Event\ExlEventModel.cs" />
     <Compile Include="Model\Result\ConvertResult .cs" />

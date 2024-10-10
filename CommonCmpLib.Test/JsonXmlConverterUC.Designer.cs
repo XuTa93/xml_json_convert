@@ -37,9 +37,9 @@ namespace CommonCmpLib_Test
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.rtxt_Log = new System.Windows.Forms.RichTextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rbtn_Trace = new System.Windows.Forms.RadioButton();
-            this.rbtn_DataCollectionPlan = new System.Windows.Forms.RadioButton();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.rbtn_DataCollectionPlan = new System.Windows.Forms.RadioButton();
+            this.rbtn_Trace = new System.Windows.Forms.RadioButton();
             this.rbtn_Parameter = new System.Windows.Forms.RadioButton();
             this.btn_Convert = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -137,17 +137,17 @@ namespace CommonCmpLib_Test
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "File Name";
             // 
-            // rbtn_Trace
+            // radioButton4
             // 
-            this.rbtn_Trace.AutoSize = true;
-            this.rbtn_Trace.Checked = true;
-            this.rbtn_Trace.Location = new System.Drawing.Point(118, 19);
-            this.rbtn_Trace.Name = "rbtn_Trace";
-            this.rbtn_Trace.Size = new System.Drawing.Size(62, 20);
-            this.rbtn_Trace.TabIndex = 4;
-            this.rbtn_Trace.TabStop = true;
-            this.rbtn_Trace.Text = "Trace";
-            this.rbtn_Trace.UseVisualStyleBackColor = true;
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Checked = true;
+            this.radioButton4.Location = new System.Drawing.Point(302, 19);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(141, 20);
+            this.radioButton4.TabIndex = 6;
+            this.radioButton4.TabStop = true;
+            this.radioButton4.Text = "DataCollectionPlan";
+            this.radioButton4.UseVisualStyleBackColor = true;
             // 
             // rbtn_DataCollectionPlan
             // 
@@ -161,17 +161,17 @@ namespace CommonCmpLib_Test
             this.rbtn_DataCollectionPlan.Text = "Event";
             this.rbtn_DataCollectionPlan.UseVisualStyleBackColor = true;
             // 
-            // radioButton4
+            // rbtn_Trace
             // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Checked = true;
-            this.radioButton4.Location = new System.Drawing.Point(302, 19);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(141, 20);
-            this.radioButton4.TabIndex = 6;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "DataCollectionPlan";
-            this.radioButton4.UseVisualStyleBackColor = true;
+            this.rbtn_Trace.AutoSize = true;
+            this.rbtn_Trace.Checked = true;
+            this.rbtn_Trace.Location = new System.Drawing.Point(118, 19);
+            this.rbtn_Trace.Name = "rbtn_Trace";
+            this.rbtn_Trace.Size = new System.Drawing.Size(62, 20);
+            this.rbtn_Trace.TabIndex = 4;
+            this.rbtn_Trace.TabStop = true;
+            this.rbtn_Trace.Text = "Trace";
+            this.rbtn_Trace.UseVisualStyleBackColor = true;
             // 
             // rbtn_Parameter
             // 
@@ -209,6 +209,7 @@ namespace CommonCmpLib_Test
             this.Controls.Add(this.btn_FilePath);
             this.Name = "JsonXmlConverterUC";
             this.Size = new System.Drawing.Size(833, 493);
+            this.Load += new System.EventHandler(this.JsonXmlConverterUC_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

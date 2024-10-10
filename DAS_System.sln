@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonCmpLib", "CommonCmpLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonCmpLib_Test", "CommonCmpLib.Test\CommonCmpLib_Test.csproj", "{09785E4C-6FD0-4275-B188-170C8E5A8323}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAS_ExcelToXml", "DAS_ExcelToXmlConverter\DAS_ExcelToXml.csproj", "{0FD154EF-953B-4B39-9467-1C640D65498D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{09785E4C-6FD0-4275-B188-170C8E5A8323}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09785E4C-6FD0-4275-B188-170C8E5A8323}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09785E4C-6FD0-4275-B188-170C8E5A8323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD154EF-953B-4B39-9467-1C640D65498D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD154EF-953B-4B39-9467-1C640D65498D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD154EF-953B-4B39-9467-1C640D65498D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD154EF-953B-4B39-9467-1C640D65498D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

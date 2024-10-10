@@ -21,7 +21,7 @@ using System.Xml.Linq;
 namespace CommonCmpLib
 {
 
-    public static class Common
+    public static class Convert
     {
         #region Types
         /// <summary>
@@ -39,34 +39,7 @@ namespace CommonCmpLib
 
         #endregion Types
 
-        public static ConvertResult ParseXmlToJson<T>(string x_strXmlPath)
-        {
-            FileType fileType;
-            fileType = ValidateFile(x_strXmlPath);
-            switch (fileType)
-            {
-                case FileType.Parameter:
-                    break;
-                case FileType.TraceRequest:
-                   // XmlServices.ParseTraceXmlToList(x_strXmlPath);
-                    break;
-                case FileType.EventTrigger:
-                    //XmlServices.ParseEventXmlToList(x_strXmlPath, "eventtrigger");
-                    break;
-                case FileType.EventRequest:
-                    //XmlServices.ParseEventXmlToList(x_strXmlPath, "eventrequest");
-                    break;
-                case FileType.DataCollectionPlan:
-                    break;
-                case FileType.Unknown:
-                    //XmlServices.ParseDCPXmlToModel(x_strXmlPath);
-                    break;
-                default:
-                    break;
-            }
-            return new ConvertResult();
-        }
-        public static ConvertResult CreateDataXml(ExcelProcessResult x_objExlResult,string x_strOutFolder)
+        public static ConvertResult GenerateXmlFile(ExcelProcessResult x_objExlResult,string x_strOutFolder)
         {
             ConvertResult ObjConvertResult;
             string strXmlResult;
@@ -98,12 +71,12 @@ namespace CommonCmpLib
 
                 case EVENT.SHEET_NAME:
                     //Create EventTrigger and EventRequst Xml
-                    XmlServices.CreateEventsXml(x_objExlResult.Models, x_strOutFolder);
+                    XmlServices.GenerateEventTriggerToXml(x_objExlResult.Models, x_strOutFolder);
                     break;
 
                 case DCP.SHEET_NAME:
                     //Create DataCollectionPlan Xml
-                    XmlServices.CreateDCPXml(x_objExlResult.Models, x_strOutFolder);
+                    XmlServices.GenerateDCPXml(x_objExlResult.Models, x_strOutFolder);
                     break;
 
                 default:
@@ -291,21 +264,28 @@ namespace CommonCmpLib
         /// <summary>
         /// Handles exceptions and returns a corresponding error message.
         /// </summary>
-        internal static string HandleException(Exception objEx)
+        internal static string HandleException(Exception objEx, string x_strHandleName)
         {
+            string strLogErr = x_strHandleName + ": ";
             switch (objEx)
             {
                 case IOException ioEx:
-                    return "IO error occurred: " + ioEx.Message;
+                    strLogErr += "IO error occurred: " + ioEx.Message;
+                    break;
                 case UnauthorizedAccessException unauthEx:
-                    return "Access error: " + unauthEx.Message;
+                    strLogErr += "Access error: " + unauthEx.Message;
+                    break;
                 case XmlException xmlEx:
-                    return "XML error: " + xmlEx.Message;
+                    strLogErr += "XML error: " + xmlEx.Message;
+                    break;
                 case ArgumentNullException argEx:
-                    return "Null argument error: " + argEx.Message;
+                    strLogErr += "Null argument error: " + argEx.Message;
+                    break;
                 default:
-                    return "An unexpected error occurred: " + objEx.Message;
+                    strLogErr += "An unexpected error occurred: " + objEx.Message;
+                    break;
             }
+            return strLogErr;
         }
     }
 }

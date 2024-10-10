@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -52,7 +53,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all other exceptions
             {
-                strError = Common.HandleException(objEx);
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
             return strError;
@@ -154,7 +157,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx) // Catch all other exceptions
             {
-                strError = Common.HandleException(objEx);
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
             return strError;
@@ -214,58 +219,68 @@ namespace CommonCmpLib
             }
         }
 
+
         /// <summary>
         /// Creates an XML file representing event triggers based on the provided event requests.
         /// </summary>
         /// /// <returns>A string indicating success or an error message if an exception occurs.</returns>
-        public static string CreateEventsXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        public static string GenerateEventTriggerToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
         {
             string strError;
-            string strTriggerError;
-            string strRequestError;
             string strEvtTgPath;
-            string strEvtRqPath;
             string strXmlEvtTg;
-            string strXmlEvtRq;
             List<ExlEventModel> lstEvent;
 
             try
             {
                 strError = "Checking";
                 strEvtTgPath = Path.Combine(x_strOutFolder, "EventTrigger.xml");
-                strEvtRqPath = Path.Combine(x_strOutFolder, "EventRequest.xml");
 
                 lstEvent = ConvertEventModelToList(x_lstData); // Convert data dictionaries to event models
 
                 strXmlEvtTg = GenerateEventTriggersXmlString(lstEvent); // Generate XML string for EventTrigger
-                strTriggerError = SaveXmlToFile(strXmlEvtTg, strEvtTgPath); // Save EventTrigger XML and capture errors
-
-                strXmlEvtRq = GenerateEventRequestsXmlString(lstEvent); // Generate XML string for EventRequest
-                strRequestError = SaveXmlToFile(strXmlEvtRq, strEvtRqPath); // Save EventRequest XML and capture errors
-
-                // Check for errors in saving both XML files and prepare the error message
-                if ((string.IsNullOrEmpty(strTriggerError) == false) && (string.IsNullOrEmpty(strRequestError) == false))
-                {
-                    strError = string.Empty; // No errors
-                }
-                else if ((string.IsNullOrEmpty(strTriggerError) == true) && (string.IsNullOrEmpty(strRequestError) == true))
-                {
-                    strError = $"Save EventTriggers Error : {strTriggerError}, EventRequests Error : {strRequestError}"; // Both errors
-                }
-                else if (string.IsNullOrEmpty(strTriggerError) == false)
-                {
-                    strError = $"Save EventTriggers Error : {strTriggerError}"; // Only EventTrigger error
-                }
-                else
-                {
-                    strError = $"Save EventRequests Error : {strRequestError}"; // Only EventRequest error
-                }
+                strError = SaveXmlToFile(strXmlEvtTg, strEvtTgPath); // Save EventTrigger XML and capture errors
 
                 return strError;
             }
             catch (Exception objEx) // Catch all other exceptions
             {
-                strError = Common.HandleException(objEx);
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+            }
+
+            return strError;
+        }
+        
+        /// <summary>
+        /// Creates an XML file representing event triggers based on the provided event requests.
+        /// </summary>
+        /// /// <returns>A string indicating success or an error message if an exception occurs.</returns>
+        public static string GenerateEventRequestToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        {
+            string strError;
+            string strEvtRqPath;
+            string strXmlEvtRq;
+            List<ExlEventModel> lstEvent;
+
+            try
+            {
+                strError = "Checking";
+                strEvtRqPath = Path.Combine(x_strOutFolder, "EventRequest.xml");
+
+                lstEvent = ConvertEventModelToList(x_lstData); // Convert data dictionaries to event models
+
+                strXmlEvtRq = GenerateEventRequestsXmlString(lstEvent); // Generate XML string for EventRequest
+                strError = SaveXmlToFile(strXmlEvtRq, strEvtRqPath); // Save EventRequest XML and capture errors
+
+                return strError;
+            }
+            catch (Exception objEx) // Catch all other exceptions
+            {
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
             return strError;
@@ -367,10 +382,11 @@ namespace CommonCmpLib
         /// Creates and saves XML files for each DCP plan based on the provided list of dictionaries.
         /// </summary>
         /// /// <returns>A string indicating success or an error message if an exception occurs.</returns>
-        public static string CreateDCPXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        public static string GenerateDCPXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
         {
             string strError;
             string strFilePath;
+            string strFolderPath;
             string strSaveError;
             string strXml;
             List<ExlDCPModel> lstData;
@@ -386,7 +402,14 @@ namespace CommonCmpLib
                 foreach (var objDCP in lstData)
                 {
                     // Define the file path for the XML file based on the plan name
-                    strFilePath = Path.Combine(x_strOutFolder, $"{objDCP.PlanName}.xml");
+                    strFolderPath = Path.Combine( x_strOutFolder, "DCP");
+                    
+                    // Create the directory if it doesn't exist
+                    if (Directory.Exists(strFolderPath) == false)
+                    {
+                        Directory.CreateDirectory(strFolderPath);
+                    }
+                    strFilePath = Path.Combine(strFolderPath, $"{objDCP.PlanName}.xml");
 
                     // Generate the XML string from the DCP model
                     strXml = GenerateDCPXmlString(objDCP);
@@ -404,10 +427,17 @@ namespace CommonCmpLib
                         }
                     }
                 }
+                // No Error
+                if (strError == "Checking")
+                {
+                    strError = string.Empty;
+                }
             }
             catch (Exception objEx) // Handle any exceptions that occur
             {
-                strError = Common.HandleException(objEx); // Log and return the error message
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
             return strError;
@@ -638,7 +668,9 @@ namespace CommonCmpLib
             }
             catch (Exception objEx)
             {
-                return Common.HandleException(objEx);
+                StackTrace objStackTrace = new StackTrace();
+                string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
+                return Convert.HandleException(objEx, strMethodName);
             }
         }
 
