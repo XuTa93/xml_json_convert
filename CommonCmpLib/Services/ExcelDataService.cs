@@ -17,7 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace CommonCmpLib
+namespace ExcelToXmlList
 {
     public class ExcelDataService
     {
@@ -110,7 +110,7 @@ namespace CommonCmpLib
                 case ExcelSheetName.Parameter:
                     return new ExcelDataService(PARAMETER.SHEET_NAME, PARAMETER.ROW_HEADER, PARAMETER.COLUNM_KEY, PARAMETER.MANDATORY_FIELDS, PARAMETER.COLUNMS);
 
-                case ExcelSheetName.Trace:
+                case ExcelSheetName.TraceRequest:
                     return new ExcelDataService(TRACE.SHEET_NAME, TRACE.ROW_HEADER, TRACE.COLUNM_KEY, TRACE.MANDATORY_FIELDS, TRACE.COLUNMS);
                 default:
                     break;

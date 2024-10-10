@@ -1,5 +1,5 @@
 ﻿
-namespace DAS_ExcelToXmlConverter
+namespace ExcelToXmlConverter
 {
     partial class ExcelToXmlConveter
     {

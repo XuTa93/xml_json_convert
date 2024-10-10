@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CommonCmpLib_Test
+namespace JsonXmlConverter_Tool
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace CommonCmpLib_Test
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TestFull());
+            Application.Run(new JsonXmlConverter());
         }
     }
 }

@@ -10,7 +10,7 @@
 // 		    ：
 //*****************************************************************************
 
-namespace ExcelToXmlList
+namespace JsonXmlConveter
 {
     public class ConvertResult
     {

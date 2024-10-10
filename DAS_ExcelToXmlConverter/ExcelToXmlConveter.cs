@@ -1,4 +1,5 @@
-﻿using CommonCmpLib;
+﻿
+using ExcelToXmlList;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DAS_ExcelToXmlConverter
+namespace ExcelToXmlConverter
 {
     public partial class ExcelToXmlConveter : Form
     {
@@ -100,109 +101,117 @@ namespace DAS_ExcelToXmlConverter
         void GenerateParamater()
         {
             ExcelDataService objExcelData;
-            ExcelProcessResult objResult;
-            string srtParaResult;
+            ExcelProcessResult objExlResult;
+            ConvertResult objXmlResult;
 
             objExcelData = ExcelDataService.Initialize(ExcelSheetName.Parameter);
-            objResult = objExcelData.Read(lbl_ExcelPath.Text);
-            srtParaResult = objResult.Message;
+            objExlResult = objExcelData.Read(lbl_ExcelPath.Text);
 
-            if (objResult.IsSuccess == true)
+
+            if (objExlResult.IsSuccess == true)
             {
-                Log(srtParaResult);
-                
-                string resurlt = XmlServices.GenerateParameterToXml(objResult.Models, lbl_xmlFolder.Text);
+                objXmlResult = XmlServices.GenerateParameterToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{ExcelSheetName.Parameter}.xml");
+                if (objXmlResult.IsSuccess)
+                {
+                    Log(objXmlResult.Message);
+                }
+                else
+                {
+                    ErrLog(objXmlResult.Message);
+                }
             }
             else
             {
-                ErrLog(srtParaResult);
+                ErrLog(objExlResult.Message);
             }
         }
         void GenerateTrace()
         {
             ExcelDataService objExcelData;
-            ExcelProcessResult objResult;
-            string srtParaResult;
+            ExcelProcessResult objExlResult;
+            ConvertResult objXmlResult;
 
-            objExcelData = ExcelDataService.Initialize(ExcelSheetName.Trace);
-            objResult = objExcelData.Read(lbl_ExcelPath.Text);
-            srtParaResult = objResult.Message;
+            objExcelData = ExcelDataService.Initialize(ExcelSheetName.TraceRequest);
+            objExlResult = objExcelData.Read(lbl_ExcelPath.Text);
 
-            if (objResult.IsSuccess == true)
+            if (objExlResult.IsSuccess == true)
             {
-                Log(srtParaResult);
-                string resurlt = XmlServices.GenerateTraceToXml(objResult.Models, lbl_xmlFolder.Text);
+                objXmlResult = XmlServices.GenerateTraceToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{ExcelSheetName.TraceRequest}.xml");
+                if (objXmlResult.IsSuccess)
+                {
+                    Log(objXmlResult.Message);
+                }
+                else
+                {
+                    ErrLog(objXmlResult.Message);
+                }
             }
             else
             {
-                ErrLog(srtParaResult);
+                ErrLog(objExlResult.Message);
             }
         }
         void GenerateEvent()
         {
             ExcelDataService objExcelData;
-            ExcelProcessResult objResult;
-            string strExResult;
-            string strXmlResult;
+            ExcelProcessResult objExlResult;
+            ConvertResult objXmlResult;
 
             objExcelData = ExcelDataService.Initialize(ExcelSheetName.Event);
-            objResult = objExcelData.Read(lbl_ExcelPath.Text);
-            strExResult = objResult.Message;
+            objExlResult = objExcelData.Read(lbl_ExcelPath.Text);
 
-            if (objResult.IsSuccess == true)
+            if (objExlResult.IsSuccess == true)
             {
-                strXmlResult = XmlServices.GenerateEventTriggerToXml(objResult.Models, lbl_xmlFolder.Text);
-                if (string.IsNullOrEmpty(strXmlResult))
+                objXmlResult = XmlServices.GenerateEventTriggerToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{EVENT.SHEET_NAME_TRIGGER}.xml");
+                if (objXmlResult.IsSuccess)
                 {
-                    Log(strExResult);
+                    Log(objXmlResult.Message);
                 }
                 else
                 {
-                    ErrLog(strXmlResult);
+                    ErrLog(objXmlResult.Message);
                 }
 
-                strXmlResult = XmlServices.GenerateEventRequestToXml(objResult.Models, lbl_xmlFolder.Text);
-                if (string.IsNullOrEmpty(strXmlResult))
+                objXmlResult = XmlServices.GenerateEventRequestToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{EVENT.SHEET_NAME_REQUEST}.xml");
+                if (objXmlResult.IsSuccess)
                 {
-                    Log(strExResult);
+                    Log(objXmlResult.Message);
                 }
                 else
                 {
-                    ErrLog(strXmlResult);
+                    ErrLog(objXmlResult.Message);
                 }
             }
             else
             {
-                ErrLog(strExResult);
+                ErrLog(objExlResult.Message);
             }
         }
         void GenerateDCP()
         {
             ExcelDataService objExcelData;
-            ExcelProcessResult objResult;
-            string strExResult;
-            string strXmlResult;
+            ExcelProcessResult objExlResult;
+            ConvertResult objXmlResult;
 
             objExcelData = ExcelDataService.Initialize(ExcelSheetName.DataCollectionPlan);
-            objResult = objExcelData.Read(lbl_ExcelPath.Text);
-            strExResult = objResult.Message;
+            objExlResult = objExcelData.Read(lbl_ExcelPath.Text);
 
-            if (objResult.IsSuccess == true)
+
+            if (objExlResult.IsSuccess == true)
             {
-                Log(strExResult);
-                strXmlResult = XmlServices.GenerateDCPXml(objResult.Models, lbl_xmlFolder.Text);
-                if (string.IsNullOrEmpty(strXmlResult))
+                objXmlResult = XmlServices.GenerateDCPXml(objExlResult.Models, lbl_xmlFolder.Text);
+                if (objXmlResult.IsSuccess == true)
                 {
-                    Log(strExResult);
+                    Log(objXmlResult.Message);
                 }
                 else
                 {
-                    ErrLog(strXmlResult);
+                    ErrLog(objXmlResult.Message);
                 }
             }
             else
             {
-                ErrLog(strExResult);
+                ErrLog(objExlResult.Message);
             }
         }
         void ErrLog(string x_strMsg)

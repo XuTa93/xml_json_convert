@@ -12,20 +12,17 @@
 
 using System.Collections.Generic;
 
-namespace ExcelToXmlList
+namespace JsonXmlConveter
 {
-    public class ExlTraceRequestModel
+    public class ExlEventModel
     {
-        // Mandatory fields
         public string No { get; set; }
-        public string TraceID { get; set; }
-        public string TraceName { get; set; }
+        public string EventID { get; set; }
+        public string EventName { get; set; }
+        public string AndOr { get; set; }    
+        public string Equation { get; set; }
+        public string Value { get; set; }
+
         public List<string> ParametersID { get; set; }
-
-        // Optional fields
-        public string Description { get; set; }
-        public string StartOn { get; set; }
-        public string StopOn { get; set; }
     }
-
 }

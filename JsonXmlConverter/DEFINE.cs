@@ -12,9 +12,8 @@
 
 using System.Collections.Generic;
 
-namespace ExcelToXmlList
+namespace JsonXmlConveter
 {
-    #region Types
     /// <summary>
     /// Parameter, TraceRequest, EventTrigger, EventRequest, DataCollectionPlan
     /// </summary>
@@ -27,8 +26,6 @@ namespace ExcelToXmlList
         DataCollectionPlan,
         Unknown
     }
-
-    #endregion Types
     public enum ExcelSheetName
     {
         Parameter,

@@ -46,32 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExcelUC.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ExcelUC.Designer.cs">
-      <DependentUpon>ExcelUC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JsonXmlConverterUC.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="JsonXmlConverterUC.Designer.cs">
-      <DependentUpon>JsonXmlConverterUC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TestFull.cs">
+    <Compile Include="JsonXmlConverter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestFull.Designer.cs">
-      <DependentUpon>TestFull.cs</DependentUpon>
+    <Compile Include="JsonXmlConverter.Designer.cs">
+      <DependentUpon>JsonXmlConverter.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ExcelUC.resx">
-      <DependentUpon>ExcelUC.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="JsonXmlConverterUC.resx">
-      <DependentUpon>JsonXmlConverterUC.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -81,8 +63,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="TestFull.resx">
-      <DependentUpon>TestFull.cs</DependentUpon>
+    <EmbeddedResource Include="JsonXmlConverter.resx">
+      <DependentUpon>JsonXmlConverter.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -98,9 +80,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonCmpLib\CommonCmpLib.csproj">
-      <Project>{b767684c-7a89-4340-bd85-46a7088cd717}</Project>
-      <Name>CommonCmpLib</Name>
+    <ProjectReference Include="..\JsonXmlConverter\Lib_JsonXmlConverter.csproj">
+      <Project>{99E453AE-3841-4587-AEC5-6FBE1D078DB8}</Project>
+      <Name>Lib_JsonXmlConverter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

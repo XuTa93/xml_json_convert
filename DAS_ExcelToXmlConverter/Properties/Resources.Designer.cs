@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-namespace DAS_ExcelToXmlConverter.Properties
+namespace ExcelToXmlConverter.Properties
 {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
@@ -43,7 +43,7 @@ namespace DAS_ExcelToXmlConverter.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DAS_ExcelToXmlConverter.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExcelToXmlConverter.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

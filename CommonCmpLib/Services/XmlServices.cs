@@ -17,7 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 
-namespace CommonCmpLib
+namespace ExcelToXmlList
 {
     public static class XmlServices
     {
@@ -34,31 +34,32 @@ namespace CommonCmpLib
         /// Converts a list of parameters stored in dictionaries into an XML format and saves it to a file.
         /// </summary>
         /// <returns>A string indicating success or an error message if an exception occurs.</returns>
-        public static string GenerateParameterToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        public static ConvertResult GenerateParameterToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder, string x_strFileName)
         {
+            ConvertResult objResult;
             string strFilePath;
-            string strError;
             string strXml;
 
+            objResult = new ConvertResult();
             try
             {
-                strError = "Checking";
-                strFilePath = Path.Combine(x_strOutFolder, "parameters.xml");
+                strFilePath = Path.Combine(x_strOutFolder, x_strFileName);               
 
                 // Generate XML string from data
                 strXml = GenerateParameterXmlString(x_lstData);
 
                 // Save the generated XML string to the specified file path and return any potential save errors
-                return SaveXmlToFile(strXml, strFilePath);
+                return SaveXmlToFile(strXml, strFilePath, x_strFileName);
             }
             catch (Exception objEx) // Catch all other exceptions
             {
+                objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
-            return strError;
+            return objResult;
         }
 
         /// <summary>
@@ -134,17 +135,17 @@ namespace CommonCmpLib
         /// Creates an XML file representing trace requests based on the provided list of data dictionaries.
         /// </summary>
         /// /// <returns>A string indicating success or an error message if an exception occurs.</returns>
-        public static string GenerateTraceToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        public static ConvertResult GenerateTraceToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder,string x_strFileName)
         {
-            string strError;
+            ConvertResult objResult;
             string strFilePath;
             string strXml;
             List<ExlTraceRequestModel> lstTrace;
 
+            objResult = new ConvertResult();
             try
             {
-                strError = "Checking";
-                strFilePath = Path.Combine(x_strOutFolder, "TraceRequest.xml");
+                strFilePath = Path.Combine(x_strOutFolder, x_strFileName);
 
                 // Convert the list of data dictionaries to a list of ExlTraceRequestModel objects
                 lstTrace = ConvertTraceModelToList(x_lstData);
@@ -153,16 +154,17 @@ namespace CommonCmpLib
                 strXml = GenerateTraceXmlString(lstTrace);
 
                 // Save the generated XML string to the specified file path and return any potential save errors
-                return SaveXmlToFile(strXml, strFilePath);
+                return SaveXmlToFile(strXml, strFilePath, x_strFileName);
             }
             catch (Exception objEx) // Catch all other exceptions
             {
+                objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
-            return strError;
+            return objResult;
         }
 
         /// <summary>
@@ -219,71 +221,77 @@ namespace CommonCmpLib
             }
         }
 
-
         /// <summary>
         /// Creates an XML file representing event triggers based on the provided event requests.
         /// </summary>
         /// /// <returns>A string indicating success or an error message if an exception occurs.</returns>
-        public static string GenerateEventTriggerToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        public static ConvertResult GenerateEventTriggerToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder, string x_strFileName)
         {
-            string strError;
-            string strEvtTgPath;
-            string strXmlEvtTg;
+            ConvertResult objResult;
+            string strFilePath;
+            string strXml;
             List<ExlEventModel> lstEvent;
 
+            objResult = new ConvertResult();
             try
             {
-                strError = "Checking";
-                strEvtTgPath = Path.Combine(x_strOutFolder, "EventTrigger.xml");
+                strFilePath = Path.Combine(x_strOutFolder, x_strFileName);
 
-                lstEvent = ConvertEventModelToList(x_lstData); // Convert data dictionaries to event models
+                // Convert data dictionaries to event models
+                lstEvent = ConvertEventModelToList(x_lstData);
 
-                strXmlEvtTg = GenerateEventTriggersXmlString(lstEvent); // Generate XML string for EventTrigger
-                strError = SaveXmlToFile(strXmlEvtTg, strEvtTgPath); // Save EventTrigger XML and capture errors
+                // Generate XML string for EventTrigger
+                strXml = GenerateEventTriggersXmlString(lstEvent);
 
-                return strError;
+                // Save EventTrigger XML and capture errors
+                return SaveXmlToFile(strXml, strFilePath, x_strFileName); 
             }
-            catch (Exception objEx) // Catch all other exceptions
+            catch (Exception objEx) 
             {
+                // Handle the exception and return the error message
+                objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = Convert.HandleException(objEx, strMethodName);
             }
 
-            return strError;
+            return objResult;
         }
         
         /// <summary>
         /// Creates an XML file representing event triggers based on the provided event requests.
         /// </summary>
         /// /// <returns>A string indicating success or an error message if an exception occurs.</returns>
-        public static string GenerateEventRequestToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        public static ConvertResult GenerateEventRequestToXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder, string x_strFileName)
         {
-            string strError;
-            string strEvtRqPath;
-            string strXmlEvtRq;
+            ConvertResult objResult;
+            string strFilePath;
+            string strXml;
             List<ExlEventModel> lstEvent;
 
+            objResult = new ConvertResult();
             try
             {
-                strError = "Checking";
-                strEvtRqPath = Path.Combine(x_strOutFolder, "EventRequest.xml");
+                strFilePath = Path.Combine(x_strOutFolder, x_strFileName);
 
-                lstEvent = ConvertEventModelToList(x_lstData); // Convert data dictionaries to event models
+                // Convert data dictionaries to event models
+                lstEvent = ConvertEventModelToList(x_lstData);
 
-                strXmlEvtRq = GenerateEventRequestsXmlString(lstEvent); // Generate XML string for EventRequest
-                strError = SaveXmlToFile(strXmlEvtRq, strEvtRqPath); // Save EventRequest XML and capture errors
+                // Generate XML string for EventRequest
+                strXml = GenerateEventRequestsXmlString(lstEvent);
 
-                return strError;
+                // Save EventRequest XML and capture errors
+                return SaveXmlToFile(strXml, strFilePath, x_strFileName); 
             }
-            catch (Exception objEx) // Catch all other exceptions
+            catch (Exception objEx) 
             {
+                // Handle the exception and return the error message
+                objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = Convert.HandleException(objEx, strMethodName); 
             }
-
-            return strError;
+            return objResult;
         }
 
         /// <summary>
@@ -382,25 +390,29 @@ namespace CommonCmpLib
         /// Creates and saves XML files for each DCP plan based on the provided list of dictionaries.
         /// </summary>
         /// /// <returns>A string indicating success or an error message if an exception occurs.</returns>
-        public static string GenerateDCPXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
+        public static ConvertResult GenerateDCPXml(List<Dictionary<string, string>> x_lstData, string x_strOutFolder)
         {
-            string strError;
+            ConvertResult objResult;
             string strFilePath;
             string strFolderPath;
-            string strSaveError;
             string strXml;
             List<ExlDCPModel> lstData;
 
+            objResult = new ConvertResult();
             try
             {
-                strError = "Checking"; // Initial check status
-
+                
                 // Convert the input data to a list of DCP models
                 lstData = ConvertToDCPModelList(x_lstData);
 
+                objResult.IsSuccess = true;
+
                 // Iterate through each DCP model and generate corresponding XML files
-                foreach (var objDCP in lstData)
+                foreach (ExlDCPModel objDCP in lstData)
                 {
+                    string strFileName = $"{objDCP.PlanName}.xml";
+                    ConvertResult objSubResult = new ConvertResult();
+
                     // Define the file path for the XML file based on the plan name
                     strFolderPath = Path.Combine( x_strOutFolder, "DCP");
                     
@@ -409,38 +421,28 @@ namespace CommonCmpLib
                     {
                         Directory.CreateDirectory(strFolderPath);
                     }
-                    strFilePath = Path.Combine(strFolderPath, $"{objDCP.PlanName}.xml");
+                    strFilePath = Path.Combine(strFolderPath, strFileName);
 
                     // Generate the XML string from the DCP model
                     strXml = GenerateDCPXmlString(objDCP);
 
                     // Save the XML string to the file
-                    strSaveError = SaveXmlToFile(strXml, strFilePath);
+                    objSubResult = SaveXmlToFile(strXml, strFilePath, strFileName);
 
                     // Check for errors during file saving
-                    if (string.IsNullOrEmpty(strSaveError))
-                    {
-                        if (strError != "Checking")
-                        {
-                            // Append error messages for each plan if any issues occur
-                            strError += $"{objDCP.PlanName} : {strSaveError}.";
-                        }
-                    }
-                }
-                // No Error
-                if (strError == "Checking")
-                {
-                    strError = string.Empty;
+                    objResult.IsSuccess = objResult.IsSuccess && objSubResult.IsSuccess;
+                    objResult.Message += objSubResult.Message +", ";
                 }
             }
             catch (Exception objEx) // Handle any exceptions that occur
             {
+                objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                strError = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
-            return strError;
+            return objResult;
         }
 
         /// <summary>
@@ -653,24 +655,31 @@ namespace CommonCmpLib
         /// Save the XML string to a file.
         /// </summary>
         /// <returns>Error message if saving fails, otherwise an empty string.</returns>
-        private static string SaveXmlToFile(string x_strXml, string x_strFilePath)
+        private static ConvertResult SaveXmlToFile(string x_strXml, string x_strFilePath, string x_strFileName)
         {
+            ConvertResult objResult = new ConvertResult();
             // Validate XML string
             if (string.IsNullOrEmpty(x_strXml))
             {
-                return "XML value null";
+                objResult.IsSuccess = false;
+                objResult.Message = "XML value null";
             }
 
             try
             {
+                
                 File.WriteAllText(x_strFilePath, x_strXml);
-                return ""; // Return empty string if successful
+                objResult.IsSuccess = true;
+                objResult.Message = x_strFileName + " saved successful";
+                return objResult; // Return empty string if successful
             }
             catch (Exception objEx)
             {
+                objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                return Convert.HandleException(objEx, strMethodName);
+                objResult.Message = $" {x_strFileName} : {Convert.HandleException(objEx, strMethodName)}";
+                return objResult;
             }
         }
 

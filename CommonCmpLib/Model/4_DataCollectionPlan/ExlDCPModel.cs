@@ -12,7 +12,7 @@
 
 using System.Collections.Generic;
 
-namespace CommonCmpLib
+namespace ExcelToXmlList
 {
     public class ExlDCPModel
     {

@@ -113,15 +113,10 @@
     <Compile Include="Model\Result\ConvertResult .cs" />
     <Compile Include="Model\Result\ExcelProcessResult.cs" />
     <Compile Include="Model\2_Trace\ExlTraceRequestModel.cs" />
-    <Compile Include="Services\NotUsed\DCPService.cs" />
-    <Compile Include="Services\NotUsed\EventService.cs" />
     <Compile Include="DEFINE.cs" />
     <Compile Include="Services\ExcelDataService.cs" />
-    <Compile Include="Services\NotUsed\ParameterServices.cs" />
     <Compile Include="Model\1_Parameter\ExlParameterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\NotUsed\TraceService.cs" />
-    <Compile Include="Services\JsonServices.cs" />
     <Compile Include="Services\XmlServices.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -80,9 +80,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonCmpLib\CommonCmpLib.csproj">
+    <ProjectReference Include="..\CommonCmpLib\Lib_ExcelToXmlList.csproj">
       <Project>{b767684c-7a89-4340-bd85-46a7088cd717}</Project>
-      <Name>CommonCmpLib</Name>
+      <Name>Lib_ExcelToXmlList</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

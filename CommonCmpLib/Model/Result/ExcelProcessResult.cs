@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CommonCmpLib
+namespace ExcelToXmlList
 {
     public class ExcelProcessResult
     {

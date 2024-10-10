@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.34931.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonCmpLib", "CommonCmpLib\CommonCmpLib.csproj", "{B767684C-7A89-4340-BD85-46A7088CD717}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib_ExcelToXmlList", "CommonCmpLib\Lib_ExcelToXmlList.csproj", "{B767684C-7A89-4340-BD85-46A7088CD717}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonCmpLib_Test", "CommonCmpLib.Test\CommonCmpLib_Test.csproj", "{09785E4C-6FD0-4275-B188-170C8E5A8323}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonXmlConverter_Tool", "CommonCmpLib.Test\JsonXmlConverter_Tool.csproj", "{09785E4C-6FD0-4275-B188-170C8E5A8323}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAS_ExcelToXml", "DAS_ExcelToXmlConverter\DAS_ExcelToXml.csproj", "{0FD154EF-953B-4B39-9467-1C640D65498D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelToXml_Tool", "DAS_ExcelToXmlConverter\ExcelToXml_Tool.csproj", "{0FD154EF-953B-4B39-9467-1C640D65498D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib_JsonXmlConverter", "JsonXmlConverter\Lib_JsonXmlConverter.csproj", "{99E453AE-3841-4587-AEC5-6FBE1D078DB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{0FD154EF-953B-4B39-9467-1C640D65498D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FD154EF-953B-4B39-9467-1C640D65498D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FD154EF-953B-4B39-9467-1C640D65498D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99E453AE-3841-4587-AEC5-6FBE1D078DB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99E453AE-3841-4587-AEC5-6FBE1D078DB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99E453AE-3841-4587-AEC5-6FBE1D078DB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99E453AE-3841-4587-AEC5-6FBE1D078DB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
