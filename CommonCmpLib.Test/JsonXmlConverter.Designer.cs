@@ -39,26 +39,26 @@ namespace JsonXmlConverter_Tool
             this.btn_XmlFolder = new System.Windows.Forms.Button();
             this.lbl_FilePath = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rbtn_DataCollectionPlan1 = new System.Windows.Forms.RadioButton();
-            this.rbtn_EventTrigger = new System.Windows.Forms.RadioButton();
-            this.rbtn_Trace = new System.Windows.Forms.RadioButton();
-            this.rbtn_Parameter = new System.Windows.Forms.RadioButton();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbtn_EventRequest = new System.Windows.Forms.RadioButton();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.rbtn_DataCollectionPlan = new System.Windows.Forms.RadioButton();
+            this.rbtn_EventRequest = new System.Windows.Forms.RadioButton();
+            this.rbtn_Parameter = new System.Windows.Forms.RadioButton();
+            this.rbtn_TraceRequest = new System.Windows.Forms.RadioButton();
+            this.rbtn_EventTrigger = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.rbtn_Xml = new System.Windows.Forms.RadioButton();
             this.rbtn_Json = new System.Windows.Forms.RadioButton();
+            this.rbtn_Xml = new System.Windows.Forms.RadioButton();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rtb_SelectedFiles = new System.Windows.Forms.RichTextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.rtb_Log = new System.Windows.Forms.RichTextBox();
-            this.rtb_SelectedFiles = new System.Windows.Forms.RichTextBox();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,6 +85,7 @@ namespace JsonXmlConverter_Tool
             this.btn_Clear.TabIndex = 9;
             this.btn_Clear.Text = "Clear Log";
             this.btn_Clear.UseVisualStyleBackColor = true;
+            this.btn_Clear.Click += new System.EventHandler(this.btn_Clear_Click);
             // 
             // btn_Covert
             // 
@@ -146,92 +147,16 @@ namespace JsonXmlConverter_Tool
             this.groupBox3.Size = new System.Drawing.Size(153, 205);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Convert Type";
-            // 
-            // rbtn_DataCollectionPlan1
-            // 
-            this.rbtn_DataCollectionPlan1.AutoSize = true;
-            this.rbtn_DataCollectionPlan1.Location = new System.Drawing.Point(3, 143);
-            this.rbtn_DataCollectionPlan1.Name = "rbtn_DataCollectionPlan1";
-            this.rbtn_DataCollectionPlan1.Size = new System.Drawing.Size(130, 19);
-            this.rbtn_DataCollectionPlan1.TabIndex = 6;
-            this.rbtn_DataCollectionPlan1.Text = "DataCollectionPlan";
-            this.rbtn_DataCollectionPlan1.UseVisualStyleBackColor = true;
-            // 
-            // rbtn_EventTrigger
-            // 
-            this.rbtn_EventTrigger.AutoSize = true;
-            this.rbtn_EventTrigger.Location = new System.Drawing.Point(3, 73);
-            this.rbtn_EventTrigger.Name = "rbtn_EventTrigger";
-            this.rbtn_EventTrigger.Size = new System.Drawing.Size(94, 19);
-            this.rbtn_EventTrigger.TabIndex = 5;
-            this.rbtn_EventTrigger.Text = "EventTrigger";
-            this.rbtn_EventTrigger.UseVisualStyleBackColor = true;
-            // 
-            // rbtn_Trace
-            // 
-            this.rbtn_Trace.AutoSize = true;
-            this.rbtn_Trace.Location = new System.Drawing.Point(3, 38);
-            this.rbtn_Trace.Name = "rbtn_Trace";
-            this.rbtn_Trace.Size = new System.Drawing.Size(102, 19);
-            this.rbtn_Trace.TabIndex = 4;
-            this.rbtn_Trace.Text = "TraceRequest";
-            this.rbtn_Trace.UseVisualStyleBackColor = true;
-            // 
-            // rbtn_Parameter
-            // 
-            this.rbtn_Parameter.AutoSize = true;
-            this.rbtn_Parameter.Checked = true;
-            this.rbtn_Parameter.Location = new System.Drawing.Point(3, 3);
-            this.rbtn_Parameter.Name = "rbtn_Parameter";
-            this.rbtn_Parameter.Size = new System.Drawing.Size(83, 19);
-            this.rbtn_Parameter.TabIndex = 3;
-            this.rbtn_Parameter.Text = "Parameter";
-            this.rbtn_Parameter.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(9, 77);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(150, 97);
-            this.groupBox1.TabIndex = 11;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Data Type";
-            // 
-            // rbtn_EventRequest
-            // 
-            this.rbtn_EventRequest.AutoSize = true;
-            this.rbtn_EventRequest.Location = new System.Drawing.Point(3, 108);
-            this.rbtn_EventRequest.Name = "rbtn_EventRequest";
-            this.rbtn_EventRequest.Size = new System.Drawing.Size(101, 19);
-            this.rbtn_EventRequest.TabIndex = 7;
-            this.rbtn_EventRequest.Text = "EventRequest";
-            this.rbtn_EventRequest.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox2.Controls.Add(this.rtb_SelectedFiles);
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(168, 77);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(5);
-            this.groupBox2.Size = new System.Drawing.Size(167, 309);
-            this.groupBox2.TabIndex = 14;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Selected Files";
+            this.groupBox3.Text = "Data Type";
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.rbtn_DataCollectionPlan1, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.rbtn_DataCollectionPlan, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.rbtn_EventRequest, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.rbtn_Parameter, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.rbtn_Trace, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.rbtn_TraceRequest, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.rbtn_EventTrigger, 0, 2);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(6, 22);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -243,6 +168,74 @@ namespace JsonXmlConverter_Tool
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(141, 176);
             this.tableLayoutPanel1.TabIndex = 15;
+            // 
+            // rbtn_DataCollectionPlan
+            // 
+            this.rbtn_DataCollectionPlan.AutoSize = true;
+            this.rbtn_DataCollectionPlan.Location = new System.Drawing.Point(3, 143);
+            this.rbtn_DataCollectionPlan.Name = "rbtn_DataCollectionPlan";
+            this.rbtn_DataCollectionPlan.Size = new System.Drawing.Size(130, 19);
+            this.rbtn_DataCollectionPlan.TabIndex = 6;
+            this.rbtn_DataCollectionPlan.Text = "DataCollectionPlan";
+            this.rbtn_DataCollectionPlan.UseVisualStyleBackColor = true;
+            this.rbtn_DataCollectionPlan.CheckedChanged += new System.EventHandler(this.ConvertType_CheckedChanged);
+            // 
+            // rbtn_EventRequest
+            // 
+            this.rbtn_EventRequest.AutoSize = true;
+            this.rbtn_EventRequest.Location = new System.Drawing.Point(3, 108);
+            this.rbtn_EventRequest.Name = "rbtn_EventRequest";
+            this.rbtn_EventRequest.Size = new System.Drawing.Size(101, 19);
+            this.rbtn_EventRequest.TabIndex = 7;
+            this.rbtn_EventRequest.Text = "EventRequest";
+            this.rbtn_EventRequest.UseVisualStyleBackColor = true;
+            this.rbtn_EventRequest.CheckedChanged += new System.EventHandler(this.ConvertType_CheckedChanged);
+            // 
+            // rbtn_Parameter
+            // 
+            this.rbtn_Parameter.AutoSize = true;
+            this.rbtn_Parameter.Checked = true;
+            this.rbtn_Parameter.Location = new System.Drawing.Point(3, 3);
+            this.rbtn_Parameter.Name = "rbtn_Parameter";
+            this.rbtn_Parameter.Size = new System.Drawing.Size(83, 19);
+            this.rbtn_Parameter.TabIndex = 3;
+            this.rbtn_Parameter.TabStop = true;
+            this.rbtn_Parameter.Text = "Parameter";
+            this.rbtn_Parameter.UseVisualStyleBackColor = true;
+            this.rbtn_Parameter.CheckedChanged += new System.EventHandler(this.ConvertType_CheckedChanged);
+            // 
+            // rbtn_TraceRequest
+            // 
+            this.rbtn_TraceRequest.AutoSize = true;
+            this.rbtn_TraceRequest.Location = new System.Drawing.Point(3, 38);
+            this.rbtn_TraceRequest.Name = "rbtn_TraceRequest";
+            this.rbtn_TraceRequest.Size = new System.Drawing.Size(102, 19);
+            this.rbtn_TraceRequest.TabIndex = 4;
+            this.rbtn_TraceRequest.Text = "TraceRequest";
+            this.rbtn_TraceRequest.UseVisualStyleBackColor = true;
+            this.rbtn_TraceRequest.CheckedChanged += new System.EventHandler(this.ConvertType_CheckedChanged);
+            // 
+            // rbtn_EventTrigger
+            // 
+            this.rbtn_EventTrigger.AutoSize = true;
+            this.rbtn_EventTrigger.Location = new System.Drawing.Point(3, 73);
+            this.rbtn_EventTrigger.Name = "rbtn_EventTrigger";
+            this.rbtn_EventTrigger.Size = new System.Drawing.Size(94, 19);
+            this.rbtn_EventTrigger.TabIndex = 5;
+            this.rbtn_EventTrigger.Text = "EventTrigger";
+            this.rbtn_EventTrigger.UseVisualStyleBackColor = true;
+            this.rbtn_EventTrigger.CheckedChanged += new System.EventHandler(this.ConvertType_CheckedChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
+            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox1.Location = new System.Drawing.Point(9, 77);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(150, 97);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Convert Type";
             // 
             // tableLayoutPanel2
             // 
@@ -258,6 +251,16 @@ namespace JsonXmlConverter_Tool
             this.tableLayoutPanel2.Size = new System.Drawing.Size(138, 66);
             this.tableLayoutPanel2.TabIndex = 15;
             // 
+            // rbtn_Json
+            // 
+            this.rbtn_Json.AutoSize = true;
+            this.rbtn_Json.Location = new System.Drawing.Point(3, 38);
+            this.rbtn_Json.Name = "rbtn_Json";
+            this.rbtn_Json.Size = new System.Drawing.Size(104, 19);
+            this.rbtn_Json.TabIndex = 5;
+            this.rbtn_Json.Text = "*.json => *.xml";
+            this.rbtn_Json.UseVisualStyleBackColor = true;
+            // 
             // rbtn_Xml
             // 
             this.rbtn_Xml.AutoSize = true;
@@ -270,15 +273,29 @@ namespace JsonXmlConverter_Tool
             this.rbtn_Xml.Text = "*.xml => *.json";
             this.rbtn_Xml.UseVisualStyleBackColor = true;
             // 
-            // rbtn_Json
+            // groupBox2
             // 
-            this.rbtn_Json.AutoSize = true;
-            this.rbtn_Json.Location = new System.Drawing.Point(3, 38);
-            this.rbtn_Json.Name = "rbtn_Json";
-            this.rbtn_Json.Size = new System.Drawing.Size(104, 19);
-            this.rbtn_Json.TabIndex = 5;
-            this.rbtn_Json.Text = "*.json => *.xml";
-            this.rbtn_Json.UseVisualStyleBackColor = true;
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox2.Controls.Add(this.rtb_SelectedFiles);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Location = new System.Drawing.Point(168, 77);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(5);
+            this.groupBox2.Size = new System.Drawing.Size(167, 309);
+            this.groupBox2.TabIndex = 14;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Selected Files";
+            // 
+            // rtb_SelectedFiles
+            // 
+            this.rtb_SelectedFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtb_SelectedFiles.Location = new System.Drawing.Point(5, 19);
+            this.rtb_SelectedFiles.Name = "rtb_SelectedFiles";
+            this.rtb_SelectedFiles.ReadOnly = true;
+            this.rtb_SelectedFiles.Size = new System.Drawing.Size(157, 285);
+            this.rtb_SelectedFiles.TabIndex = 11;
+            this.rtb_SelectedFiles.Text = "";
             // 
             // groupBox4
             // 
@@ -306,16 +323,6 @@ namespace JsonXmlConverter_Tool
             this.rtb_Log.TabIndex = 10;
             this.rtb_Log.Text = "";
             // 
-            // rtb_SelectedFiles
-            // 
-            this.rtb_SelectedFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtb_SelectedFiles.Location = new System.Drawing.Point(5, 19);
-            this.rtb_SelectedFiles.Name = "rtb_SelectedFiles";
-            this.rtb_SelectedFiles.ReadOnly = true;
-            this.rtb_SelectedFiles.Size = new System.Drawing.Size(157, 285);
-            this.rtb_SelectedFiles.TabIndex = 11;
-            this.rtb_SelectedFiles.Text = "";
-            // 
             // JsonXmlConverter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,12 +338,12 @@ namespace JsonXmlConverter_Tool
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -353,9 +360,9 @@ namespace JsonXmlConverter_Tool
         private System.Windows.Forms.Label lbl_FilePath;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton rbtn_EventRequest;
-        private System.Windows.Forms.RadioButton rbtn_DataCollectionPlan1;
+        private System.Windows.Forms.RadioButton rbtn_DataCollectionPlan;
         private System.Windows.Forms.RadioButton rbtn_EventTrigger;
-        private System.Windows.Forms.RadioButton rbtn_Trace;
+        private System.Windows.Forms.RadioButton rbtn_TraceRequest;
         private System.Windows.Forms.RadioButton rbtn_Parameter;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;

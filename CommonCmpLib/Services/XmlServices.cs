@@ -56,7 +56,7 @@ namespace ExcelToXmlList
                 objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                objResult.Message = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
             return objResult;
@@ -161,7 +161,7 @@ namespace ExcelToXmlList
                 objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                objResult.Message = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
             return objResult;
@@ -252,7 +252,7 @@ namespace ExcelToXmlList
                 objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                objResult.Message = Convert.HandleException(objEx, strMethodName);
+                objResult.Message = HandleException(objEx, strMethodName);
             }
 
             return objResult;
@@ -289,7 +289,7 @@ namespace ExcelToXmlList
                 objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                objResult.Message = Convert.HandleException(objEx, strMethodName); 
+                objResult.Message = HandleException(objEx, strMethodName); 
             }
             return objResult;
         }
@@ -439,7 +439,7 @@ namespace ExcelToXmlList
                 objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                objResult.Message = Convert.HandleException(objEx, strMethodName); // Handle the exception and return the error message
+                objResult.Message = HandleException(objEx, strMethodName); // Handle the exception and return the error message
             }
 
             return objResult;
@@ -678,9 +678,36 @@ namespace ExcelToXmlList
                 objResult.IsSuccess = false;
                 StackTrace objStackTrace = new StackTrace();
                 string strMethodName = objStackTrace.GetFrame(0).GetMethod().Name;
-                objResult.Message = $" {x_strFileName} : {Convert.HandleException(objEx, strMethodName)}";
+                objResult.Message = $" {x_strFileName} : {HandleException(objEx, strMethodName)}";
                 return objResult;
             }
+        }
+
+        /// <summary>
+        /// Handles exceptions and returns a corresponding error message.
+        /// </summary>
+        internal static string HandleException(Exception objEx, string x_strHandleName)
+        {
+            string strLogErr = x_strHandleName + ": ";
+            switch (objEx)
+            {
+                case IOException ioEx:
+                    strLogErr += "IO error occurred: " + ioEx.Message;
+                    break;
+                case UnauthorizedAccessException unauthEx:
+                    strLogErr += "Access error: " + unauthEx.Message;
+                    break;
+                case XmlException xmlEx:
+                    strLogErr += "XML error: " + xmlEx.Message;
+                    break;
+                case ArgumentNullException argEx:
+                    strLogErr += "Null argument error: " + argEx.Message;
+                    break;
+                default:
+                    strLogErr += "An unexpected error occurred: " + objEx.Message;
+                    break;
+            }
+            return strLogErr;
         }
 
         #endregion Methods

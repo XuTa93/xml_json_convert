@@ -111,18 +111,11 @@ namespace ExcelToXmlConverter
             if (objExlResult.IsSuccess == true)
             {
                 objXmlResult = XmlServices.GenerateParameterToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{ExcelSheetName.Parameter}.xml");
-                if (objXmlResult.IsSuccess)
-                {
-                    Log(objXmlResult.Message);
-                }
-                else
-                {
-                    ErrLog(objXmlResult.Message);
-                }
+                Log(objXmlResult);
             }
             else
             {
-                ErrLog(objExlResult.Message);
+                ErrorLog(objExlResult.Message);
             }
         }
         void GenerateTrace()
@@ -137,18 +130,11 @@ namespace ExcelToXmlConverter
             if (objExlResult.IsSuccess == true)
             {
                 objXmlResult = XmlServices.GenerateTraceToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{ExcelSheetName.TraceRequest}.xml");
-                if (objXmlResult.IsSuccess)
-                {
-                    Log(objXmlResult.Message);
-                }
-                else
-                {
-                    ErrLog(objXmlResult.Message);
-                }
+                Log(objXmlResult);
             }
             else
             {
-                ErrLog(objExlResult.Message);
+                ErrorLog(objExlResult.Message);
             }
         }
         void GenerateEvent()
@@ -163,28 +149,14 @@ namespace ExcelToXmlConverter
             if (objExlResult.IsSuccess == true)
             {
                 objXmlResult = XmlServices.GenerateEventTriggerToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{EVENT.SHEET_NAME_TRIGGER}.xml");
-                if (objXmlResult.IsSuccess)
-                {
-                    Log(objXmlResult.Message);
-                }
-                else
-                {
-                    ErrLog(objXmlResult.Message);
-                }
+                Log(objXmlResult);
 
                 objXmlResult = XmlServices.GenerateEventRequestToXml(objExlResult.Models, lbl_xmlFolder.Text, $"{EVENT.SHEET_NAME_REQUEST}.xml");
-                if (objXmlResult.IsSuccess)
-                {
-                    Log(objXmlResult.Message);
-                }
-                else
-                {
-                    ErrLog(objXmlResult.Message);
-                }
+                Log(objXmlResult);
             }
             else
             {
-                ErrLog(objExlResult.Message);
+                ErrorLog(objExlResult.Message);
             }
         }
         void GenerateDCP()
@@ -200,34 +172,43 @@ namespace ExcelToXmlConverter
             if (objExlResult.IsSuccess == true)
             {
                 objXmlResult = XmlServices.GenerateDCPXml(objExlResult.Models, lbl_xmlFolder.Text);
-                if (objXmlResult.IsSuccess == true)
-                {
-                    Log(objXmlResult.Message);
-                }
-                else
-                {
-                    ErrLog(objXmlResult.Message);
-                }
+                Log(objXmlResult);
             }
             else
             {
-                ErrLog(objExlResult.Message);
+                ErrorLog(objExlResult.Message);
             }
         }
-        void ErrLog(string x_strMsg)
+        /// <summary>
+        /// Log History
+        /// </summary>
+        void Log(ConvertResult x_objResult)
         {
-            rtb_Log.SelectionColor = Color.Red;
+            if (x_objResult.IsSuccess == true)
+            {
+                SuccessedLog(x_objResult.Message);
+            }
+            else
+            {
+                ErrorLog(x_objResult.Message);
+            }
+        }
+
+        /// <summary>
+        /// Successfully Log
+        /// </summary>
+        void SuccessedLog(string x_strMsg)
+        {
+            rtb_Log.SelectionColor = Color.DarkGreen;
             AddLog(x_strMsg);
         }
 
-        void WarningLog(string x_strMsg)
+        /// <summary>
+        /// Error Log
+        /// </summary>
+        void ErrorLog(string x_strMsg)
         {
-            rtb_Log.SelectionColor = Color.GreenYellow;
-            AddLog(x_strMsg);
-        }
-        void Log(string x_strMsg)
-        {
-            rtb_Log.SelectionColor = Color.DarkGreen;
+            rtb_Log.SelectionColor = Color.Red;
             AddLog(x_strMsg);
         }
 
@@ -242,7 +223,10 @@ namespace ExcelToXmlConverter
             rtb_Log.ScrollToCaret();
         }
 
-        private void btn_Clear_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Clear History Log
+        /// </summary>
+        private void btn_Clear_Click(object objSender, EventArgs objEvt)
         {
             rtb_Log.Clear();
         }

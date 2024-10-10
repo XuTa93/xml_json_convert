@@ -17,7 +17,7 @@ namespace JsonXmlConveter
     /// <summary>
     /// Parameter, TraceRequest, EventTrigger, EventRequest, DataCollectionPlan
     /// </summary>
-    public enum ConvertType
+    public enum DataType
     {
         Parameter,
         TraceRequest,
